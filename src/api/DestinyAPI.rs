@@ -1,19 +1,25 @@
 use reqwest::Response;
 use serde::{Deserialize, Deserializer};
 use serde_json::Value;
-use crate::api::ApiClient::ApiClient::ApiClient;
+use crate::api::ApiClient::ApiClient;
+use anyhow::Result;
 
 pub struct ApiInterface {
     pub client: ApiClient,
 }
 
 impl ApiInterface {
-    pub fn new(apikey: &str, debug: bool) -> Self {
+    pub async fn new(apikey: &str, debug: bool) -> Self {
+        let mut client = ApiClient::new(String::from(apikey));
+
+        if debug {
+            client = client.enable_debug_mode().await;
+        }
+
         Self {
-            client: (ApiClient::newWithDebug(String::from(apikey), debug)),
+            client,
         }
     }
-
 
     pub async fn get_profile(&self, bungieID: &str, membershipType: u8) -> Option<BungieUser> {
         let response = self.client.get(URL_BASE.to_owned() + "/" + membershipType.to_string().as_str() + "/Profile/" + bungieID + "?components=100");
