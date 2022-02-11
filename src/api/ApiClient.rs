@@ -4,6 +4,7 @@ use reqwest::Response;
 use anyhow::Result;
 use serde_json::Value;
 use std::sync::atomic::AtomicBool;
+use serde::de::DeserializeOwned;
 use tokio::sync::Mutex;
 
 pub struct ApiClient {
@@ -50,12 +51,12 @@ impl ApiClient {
     }
 
 
-    pub async fn get_parse<T: serde::de::DeserializeOwned>(&self, url: String,) -> Result<T> {
-        let resp = self.get(url).await?;
+    pub async fn get_parse<T: DeserializeOwned>(&self, url: String,) -> Result<()> {
+        let resp = self.get(url.clone()).await?;
 
         if *self.DEBUG_MODE.lock().await.get_mut() {
             if let Ok(text) = resp.text().await {
-                println!("GET {}", resp.url());
+                println!("GET {}", url);
                 println!("{:?}", text);
             }
         }

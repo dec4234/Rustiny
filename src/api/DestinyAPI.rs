@@ -21,6 +21,7 @@ impl ApiInterface {
         }
     }
 
+    /*
     pub async fn get_profile(&self, bungieID: &str, membershipType: u8) -> Option<BungieUser> {
         let response = self.client.get(URL_BASE.to_owned() + "/" + membershipType.to_string().as_str() + "/Profile/" + bungieID + "?components=100");
 
@@ -34,6 +35,7 @@ impl ApiInterface {
         // ["Response"]["profile"]["data"]["userInfo"]
         Some(userInfo)
     }
+     */
 }
 
 #[derive(Deserialize)]
