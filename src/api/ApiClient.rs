@@ -1,6 +1,6 @@
 use std::borrow::Borrow;
 use std::collections::HashMap;
-use reqwest::Response;
+use reqwest::{Client, Response};
 use anyhow::Result;
 use serde_json::Value;
 use std::sync::atomic::AtomicBool;
@@ -27,6 +27,10 @@ impl ApiClient {
         self
     }
 
+    pub async fn is_debug_enabled(&self) -> bool {
+        *self.DEBUG_MODE.lock().await.get_mut()
+    }
+
     pub async fn get(&self, url: String) -> Result<Response> {
         let client = reqwest::Client::new();
         let resp = client
@@ -39,7 +43,7 @@ impl ApiClient {
     }
 
     pub async fn getWithParams(&self, url: &str, params: HashMap<&str, &str>) -> Result<Response> {
-        let client = reqwest::Client::new();
+        let client = Client::new();
         let resp = client
             .get(url)
             .header("X-API-KEY", self.apikey.as_str())
@@ -51,17 +55,17 @@ impl ApiClient {
     }
 
 
-    pub async fn get_parse<T: DeserializeOwned>(&self, url: String,) -> Result<()> {
-        let resp = self.get(url.clone()).await?;
+    pub async fn get_parse<T: DeserializeOwned>(&self, url: String,) -> Result<T> {
+        let text = self.get(url.clone()).await?.text().await?;
 
-        if *self.DEBUG_MODE.lock().await.get_mut() {
-            if let Ok(text) = resp.text().await {
-                println!("GET {}", url);
-                println!("{:?}", text);
-            }
+        if self.is_debug_enabled().await {
+            println!("GET {}", url);
+            println!("{}", &text);
         }
 
-        Ok(())
+        let r = serde_json::from_str::<T>(text.as_str())?;
+
+        Ok(r)
     }
 }
 
