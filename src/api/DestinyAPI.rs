@@ -3,6 +3,7 @@ use serde::{Deserialize, Deserializer};
 use serde_json::Value;
 use crate::api::ApiClient::ApiClient;
 use anyhow::Result;
+use crate::api::user::BungieUser::{DestinyPlatform, BungieUser};
 
 pub struct ApiInterface {
     pub client: ApiClient,
@@ -21,6 +22,11 @@ impl ApiInterface {
         }
     }
 
+    pub async fn get_user(&self, id: &str, platform: DestinyPlatform) -> Result<BungieUser> {
+        let url = format!("{}/Destiny2/{membershipType}/Profile/{membershipId}/LinkedProfiles/", URL_BASE, membershipId = id, membershipType = platform.get_code());
+        //self.client.get_parse::<BungieUser>(url).await
+        BungieUser::new(self.client.get(url).await?.as_str())
+    }
     /*
     pub async fn get_profile(&self, bungieID: &str, membershipType: u8) -> Option<BungieUser> {
         let response = self.client.get(URL_BASE.to_owned() + "/" + membershipType.to_string().as_str() + "/Profile/" + bungieID + "?components=100");
@@ -38,6 +44,7 @@ impl ApiInterface {
      */
 }
 
+/*
 #[derive(Deserialize)]
 pub struct BungieUser {
 
@@ -50,6 +57,7 @@ pub struct BungieUser {
     pub displayName: String,
 
 }
+ */
 
 // Membership Types
 pub static STEAM: u8 = 3;
@@ -59,4 +67,4 @@ static PROFILES: &str = "Profiles";
 static CHARACTERS: &str = "Characters";
 
 // Other
-static URL_BASE: &str = "https://www.bungie.net/Platform/Destiny2";
+static URL_BASE: &str = "https://www.bungie.net/Platform";

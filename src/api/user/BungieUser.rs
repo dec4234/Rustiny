@@ -1,36 +1,117 @@
-use serde::Deserialize;
+use serde::{Deserialize, Deserializer};
+use serde_json::Value;
+use anyhow::Result;
 
-#[derive(Deserialize)]
+#[derive(Deserialize, Debug, Clone)]
 pub struct BungieUser {
-
+    #[serde(rename = "profiles")]
+    pub memberships: Vec<DestinyMembershipInfo>,
+    #[serde(skip)]
+    pub primary: DestinyMembershipInfo,
 }
 
 impl BungieUser {
-    pub fn from_id(id: &str, platform: DestinyPlatform) -> Self {
-        Self {
+    pub fn new(response: &str) -> Result<Self> {
+        let val: Value = serde_json::from_str(response)?;
+        let list: Vec<DestinyMembershipInfo> = serde_json::from_value(val["Response"]["profiles"].clone())?;
 
+        Ok(Self {
+            memberships: list.clone(),
+            primary: BungieUser::get_primary_membership(list).unwrap(),
+        })
+    }
+
+    fn get_primary_membership(list: Vec<DestinyMembershipInfo>) -> Option<DestinyMembershipInfo> {
+        for info in list {
+            return Some(info);
         }
+
+        None
     }
 }
 
-pub struct PlayerInfoCard {
+#[derive(Deserialize, Debug, Clone)]
+pub struct DestinyMembershipInfo {
+    #[serde(rename = "membershipId")]
+    pub id: String,
+    #[serde(rename = "membershipType")]
+    pub platform: i16,
 
+    #[serde(rename = "displayName")]
+    pub platformDisplayName: String,
+
+    pub isPublic: bool,
+    pub isOverridden: bool,
+    pub isCrossSavePrimary: bool,
+}
+
+impl DestinyMembershipInfo {
+    pub fn get_platform(&self) -> Option<DestinyPlatform> {
+        DestinyPlatform::from_code(self.platform)
+    }
+}
+
+impl Default for DestinyMembershipInfo {
+    fn default() -> Self {
+        Self {
+            id: "".to_string(),
+            platform: 0,
+            platformDisplayName: "".to_string(),
+            isPublic: false,
+            isOverridden: false,
+            isCrossSavePrimary: false
+        }
+    }
 }
 
 pub enum DestinyPlatform {
-    TigerXbox,
-    TigerPSN,
-    TigerSteam,
+    None,
+    Xbox,
+    PSN,
+    Steam,
+    Blizzard,
+    Stadia,
+    Demon,
+    BungieNext,
+    All,
 }
 
 impl DestinyPlatform {
-    pub fn get_code(&self) -> u8 {
-        match self {
-            DestinyPlatform::TigerXbox => 1,
-            DestinyPlatform::TigerPSN => 2,
-            DestinyPlatform::TigerSteam => 3,
+    pub fn from_code(code: i16) -> Option<Self> {
+        match code {
+            0 => Some(DestinyPlatform::None),
+            1 => Some(DestinyPlatform::Xbox),
+            2 => Some(DestinyPlatform::PSN),
+            3 => Some(DestinyPlatform::Steam),
+            4 => Some(DestinyPlatform::Blizzard),
+            5 => Some(DestinyPlatform::Stadia),
+            10 => Some(DestinyPlatform::Demon),
+            254 => Some(DestinyPlatform::BungieNext),
+            -1 => Some(DestinyPlatform::All),
+            _ => None
         }
     }
+
+    pub fn get_code(&self) -> i16 {
+        match self {
+            DestinyPlatform::None => 0,
+            DestinyPlatform::Xbox => 1,
+            DestinyPlatform::PSN => 2,
+            DestinyPlatform::Steam => 3,
+            DestinyPlatform::Blizzard => 4,
+            DestinyPlatform::Stadia => 5,
+            DestinyPlatform::Demon => 10,
+            DestinyPlatform::BungieNext => 254,
+            DestinyPlatform::All => -1,
+        }
+    }
+}
+
+#[derive(Deserialize)]
+pub struct BnetMembership {
+    #[serde(rename = "supplementalDisplayName")]
+    full_name: String,
+
 }
 
 /*

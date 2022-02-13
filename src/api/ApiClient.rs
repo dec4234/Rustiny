@@ -31,15 +31,23 @@ impl ApiClient {
         *self.DEBUG_MODE.lock().await.get_mut()
     }
 
-    pub async fn get(&self, url: String) -> Result<Response> {
+    pub async fn get(&self, url: String) -> Result<String> {
         let client = reqwest::Client::new();
         let resp = client
-            .get(url)
+            .get(url.clone())
             .header("X-API-KEY", self.apikey.as_str())
             .send()
             .await?;
 
-        Ok(resp)
+        let text = resp.text().await?;
+
+        if self.is_debug_enabled().await {
+            println!("GET {}", url);
+            println!("{}", text.clone());
+        }
+
+
+        Ok(text)
     }
 
     pub async fn getWithParams(&self, url: &str, params: HashMap<&str, &str>) -> Result<Response> {
@@ -56,7 +64,7 @@ impl ApiClient {
 
 
     pub async fn get_parse<T: DeserializeOwned>(&self, url: String,) -> Result<T> {
-        let text = self.get(url.clone()).await?.text().await?;
+        let text = self.get(url.clone()).await?;
 
         if self.is_debug_enabled().await {
             println!("GET {}", url);
