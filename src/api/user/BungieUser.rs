@@ -8,6 +8,7 @@ pub struct BungieUser {
     pub memberships: Vec<DestinyMembershipInfo>,
     #[serde(skip)]
     pub primary: DestinyMembershipInfo,
+    pub bnetMembership: BnetMembership,
 }
 
 impl BungieUser {
@@ -18,6 +19,7 @@ impl BungieUser {
         Ok(Self {
             memberships: list.clone(),
             primary: BungieUser::get_primary_membership(list).unwrap(),
+            bnetMembership: serde_json::from_value::<BnetMembership>(val["Response"]["bnetMembership"].clone())?,
         })
     }
 
@@ -39,10 +41,18 @@ pub struct DestinyMembershipInfo {
 
     #[serde(rename = "displayName")]
     pub platformDisplayName: String,
+    pub crossSaveOverride: i16,
+    #[serde(rename = "bungieGlobalDisplayName")]
+    pub globalDisplayName: String,
+    #[serde(rename = "bungieGlobalDisplayNameCode")]
+    pub discriminator: i32,
 
     pub isPublic: bool,
     pub isOverridden: bool,
     pub isCrossSavePrimary: bool,
+
+    #[serde(rename = "applicableMembershipTypes")]
+    pub membershipTypes: Vec<i8>,
 }
 
 impl DestinyMembershipInfo {
@@ -57,9 +67,13 @@ impl Default for DestinyMembershipInfo {
             id: "".to_string(),
             platform: 0,
             platformDisplayName: "".to_string(),
+            crossSaveOverride: 0,
+            globalDisplayName: "".to_string(),
+            discriminator: 0,
             isPublic: false,
             isOverridden: false,
-            isCrossSavePrimary: false
+            isCrossSavePrimary: false,
+            membershipTypes: vec![]
         }
     }
 }
@@ -107,11 +121,16 @@ impl DestinyPlatform {
     }
 }
 
-#[derive(Deserialize)]
+#[derive(Deserialize, Debug, Clone)]
 pub struct BnetMembership {
     #[serde(rename = "supplementalDisplayName")]
-    full_name: String,
+    pub combined_name: String,
+    #[serde(rename = "displayName")]
+    pub display_name: String,
 
+    pub icon_path: String,
+    #[serde(rename = "membershipId")]
+    pub bnet_membership_id: String,
 }
 
 /*
