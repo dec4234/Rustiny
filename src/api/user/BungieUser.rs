@@ -5,35 +5,43 @@ use anyhow::Result;
 #[derive(Deserialize, Debug, Clone)]
 pub struct BungieUser {
     #[serde(rename = "profiles")]
-    pub memberships: Vec<DestinyMembershipInfo>,
+    pub memberships: Vec<DestinyProfile>,
     #[serde(skip)]
-    pub primary: DestinyMembershipInfo,
+    pub primary: DestinyProfile,
     pub bnetMembership: BnetMembership,
 }
 
 impl BungieUser {
     pub fn new(response: &str) -> Result<Self> {
         let val: Value = serde_json::from_str(response)?;
-        let list: Vec<DestinyMembershipInfo> = serde_json::from_value(val["Response"]["profiles"].clone())?;
+        let list: Vec<DestinyProfile> = serde_json::from_value(val["Response"]["profiles"].clone())?;
 
         Ok(Self {
             memberships: list.clone(),
-            primary: BungieUser::get_primary_membership(list).unwrap(),
+            primary: BungieUser::get_primary_profile(list).unwrap(),
             bnetMembership: serde_json::from_value::<BnetMembership>(val["Response"]["bnetMembership"].clone())?,
         })
     }
 
-    fn get_primary_membership(list: Vec<DestinyMembershipInfo>) -> Option<DestinyMembershipInfo> {
+    /// Get the primary Profile associated with this account. A.k.a.
+    /// the one that has taken precedence over other profiles connected
+    /// to the account due to cross-save.
+    fn get_primary_profile(list: Vec<DestinyProfile>) -> Option<DestinyProfile> {
         for info in list {
-            return Some(info);
+            if info.crossSaveOverride == info.platform || info.crossSaveOverride == 0 {
+                return Some(info);
+            }
         }
 
         None
     }
 }
 
+/// A Destiny Profile, pertaining to an account on
+/// a specific platform. Due to cross-save, a user
+/// can have multiple profiles on their account.
 #[derive(Deserialize, Debug, Clone)]
-pub struct DestinyMembershipInfo {
+pub struct DestinyProfile {
     #[serde(rename = "membershipId")]
     pub id: String,
     #[serde(rename = "membershipType")]
@@ -55,13 +63,13 @@ pub struct DestinyMembershipInfo {
     pub membershipTypes: Vec<i8>,
 }
 
-impl DestinyMembershipInfo {
+impl DestinyProfile {
     pub fn get_platform(&self) -> Option<DestinyPlatform> {
         DestinyPlatform::from_code(self.platform)
     }
 }
 
-impl Default for DestinyMembershipInfo {
+impl Default for DestinyProfile {
     fn default() -> Self {
         Self {
             id: "".to_string(),
@@ -128,6 +136,7 @@ pub struct BnetMembership {
     #[serde(rename = "displayName")]
     pub display_name: String,
 
+    #[serde(rename = "iconPath")]
     pub icon_path: String,
     #[serde(rename = "membershipId")]
     pub bnet_membership_id: String,
