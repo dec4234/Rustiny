@@ -51,7 +51,7 @@ pub struct BungieUser {
     #[serde(rename = "membershipId")]
     pub bungieID: String,
     #[serde(rename = "bungieGlobalDisplayName")]
-    pub globalDisplayName: String,
+    pub global_display_name: String,
     #[serde(rename = "bungieGlobalDisplayNameCode")]
     pub nameDiscriminator: u16,
     pub displayName: String,

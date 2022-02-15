@@ -1,4 +1,4 @@
-use serde::{Deserialize, Deserializer};
+use serde::{Deserialize};
 use serde_json::Value;
 use anyhow::Result;
 
@@ -8,7 +8,8 @@ pub struct BungieUser {
     pub memberships: Vec<DestinyProfile>,
     #[serde(skip)]
     pub primary: DestinyProfile,
-    pub bnetMembership: BnetMembership,
+    #[serde(rename = "bnetMembership")]
+    pub bnet_membership: BnetMembership,
 }
 
 impl BungieUser {
@@ -19,7 +20,7 @@ impl BungieUser {
         Ok(Self {
             memberships: list.clone(),
             primary: BungieUser::get_primary_profile(list).unwrap(),
-            bnetMembership: serde_json::from_value::<BnetMembership>(val["Response"]["bnetMembership"].clone())?,
+            bnet_membership: serde_json::from_value::<BnetMembership>(val["Response"]["bnetMembership"].clone())?,
         })
     }
 
@@ -28,7 +29,7 @@ impl BungieUser {
     /// to the account due to cross-save.
     fn get_primary_profile(list: Vec<DestinyProfile>) -> Option<DestinyProfile> {
         for info in list {
-            if info.crossSaveOverride == info.platform || info.crossSaveOverride == 0 {
+            if info.cross_save_override == info.platform || info.cross_save_override == 0 {
                 return Some(info);
             }
         }
@@ -48,19 +49,23 @@ pub struct DestinyProfile {
     pub platform: i16,
 
     #[serde(rename = "displayName")]
-    pub platformDisplayName: String,
-    pub crossSaveOverride: i16,
+    pub platform_display_name: String,
+    #[serde(rename = "crossSaveOverride")]
+    pub cross_save_override: i16,
     #[serde(rename = "bungieGlobalDisplayName")]
-    pub globalDisplayName: String,
+    pub global_display_name: String,
     #[serde(rename = "bungieGlobalDisplayNameCode")]
     pub discriminator: i32,
 
-    pub isPublic: bool,
-    pub isOverridden: bool,
-    pub isCrossSavePrimary: bool,
+    #[serde(rename = "isPublic")]
+    pub is_public: bool,
+    #[serde(rename = "isOverridden")]
+    pub is_overridden: bool,
+    #[serde(rename = "isCrossSavePrimary")]
+    pub is_cross_save_primary: bool,
 
     #[serde(rename = "applicableMembershipTypes")]
-    pub membershipTypes: Vec<i8>,
+    pub membership_types: Vec<i8>,
 }
 
 impl DestinyProfile {
@@ -74,14 +79,14 @@ impl Default for DestinyProfile {
         Self {
             id: "".to_string(),
             platform: 0,
-            platformDisplayName: "".to_string(),
-            crossSaveOverride: 0,
-            globalDisplayName: "".to_string(),
+            platform_display_name: "".to_string(),
+            cross_save_override: 0,
+            global_display_name: "".to_string(),
             discriminator: 0,
-            isPublic: false,
-            isOverridden: false,
-            isCrossSavePrimary: false,
-            membershipTypes: vec![]
+            is_public: false,
+            is_overridden: false,
+            is_cross_save_primary: false,
+            membership_types: vec![]
         }
     }
 }
@@ -148,13 +153,13 @@ pub struct BnetMembership {
       "profiles":[
          {
             "dateLastPlayed":"2022-02-06T21:12:49Z",
-            "isOverridden":false,
-            "isCrossSavePrimary":false,
-            "crossSaveOverride":0,
+            "is_overridden":false,
+            "is_cross_save_primary":false,
+            "cross_save_override":0,
             "applicableMembershipTypes":[
                3
             ],
-            "isPublic":false,
+            "is_public":false,
             "membershipType":3,
             "membershipId":"4611686018468620320",
             "displayName":"dec4234",
@@ -165,8 +170,8 @@ pub struct BnetMembership {
       "bnetMembership":{
          "supplementalDisplayName":"dec4234#9904",
          "iconPath":"/img/profile/avatars/cc14.jpg",
-         "crossSaveOverride":0,
-         "isPublic":false,
+         "cross_save_override":0,
+         "is_public":false,
          "membershipType":254,
          "membershipId":"17506516",
          "displayName":"dec4234",
