@@ -13,14 +13,14 @@ pub struct ApiClient {
 }
 
 impl ApiClient {
-    pub fn new(apikey: String) -> Self {
+    pub fn new(apikey: &str) -> Self {
         Self {
-            apikey,
+            apikey: String::from(apikey),
             DEBUG_MODE: Mutex::new(AtomicBool::new(false)),
         }
     }
 
-    pub async fn enable_debug_mode(mut self) -> Self {
+    pub async fn enable_debug_mode(self) -> Self {
         let mut temp = self.DEBUG_MODE.lock().await;
         *temp = AtomicBool::new(true);
         drop(temp);
@@ -81,3 +81,6 @@ pub trait HandleValue {
     fn handle(value: Value) -> Value;
 }
 
+fn encode_url(url: String) -> String {
+    url.replace(" ", "%20")
+}

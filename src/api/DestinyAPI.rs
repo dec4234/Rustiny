@@ -1,8 +1,10 @@
+use std::sync::{Arc};
 use reqwest::Response;
 use serde::{Deserialize, Deserializer};
 use serde_json::Value;
 use crate::api::ApiClient::ApiClient;
 use anyhow::Result;
+use tokio::sync::{Mutex, MutexGuard};
 use crate::api::user::BungieUser::{DestinyPlatform, BungieUser};
 
 pub struct ApiInterface {
@@ -11,7 +13,7 @@ pub struct ApiInterface {
 
 impl ApiInterface {
     pub async fn new(apikey: &str, debug: bool) -> Self {
-        let mut client = ApiClient::new(String::from(apikey));
+        let mut client = ApiClient::new(apikey);
 
         if debug {
             client = client.enable_debug_mode().await;
@@ -67,4 +69,4 @@ static PROFILES: &str = "Profiles";
 static CHARACTERS: &str = "Characters";
 
 // Other
-static URL_BASE: &str = "https://www.bungie.net/Platform";
+pub static URL_BASE: &str = "https://www.bungie.net/Platform";

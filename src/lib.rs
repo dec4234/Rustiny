@@ -10,6 +10,7 @@ async fn get_api() -> ApiInterface {
 #[tokio::test]
 async fn run() {
     get_api().await.client.get(String::from("https://www.bungie.net/Platform/Destiny2/3/Profile/4611686018468620320?components=308")).await;
+    println!()
 }
 
 #[tokio::test]
