@@ -3,21 +3,53 @@ use crate::api::DestinyAPI;
 use anyhow::{anyhow, Result};
 use serde::{Deserialize, Serialize};
 use crate::api::ApiClient::ApiClient;
+use serde_json::Value;
 
 #[derive(Deserialize, Serialize)]
 pub struct Clan {
-
+    #[serde(rename = "groupId")]
+    pub id: String,
+    pub name: String,
+    pub groupType: u8,
+    #[serde(rename = "membershipIdCreated")]
+    pub founderId: String,
+    #[serde(rename = "about")]
+    pub description: String,
+    pub tags: Vec<String>,
+    pub memberCount: u8,
+    pub isPublic: bool,
+    pub isPublicTopicAdminOnly: bool,
+    pub motto: String,
+    pub allowChat: bool,
+    pub isDefaultPostPublic: bool,
+    pub chatSecurity: u8,
+    pub locale: String,
+    pub avatarImageIndex: u8,
+    pub homepage: u8,
+    pub membershipOption: u8,
+    pub defaultPublicity: u8,
+    pub theme: String,
+    pub avatarPath: String,
+    pub bannerPath: String,
 }
 
 impl Clan {
     pub async fn get_by_id(apiClient: ApiClient, id: i32) -> Result<Self> {
-        Err(anyhow!(""))
+        let clan = apiClient.get(format!("{base}/GroupV2/{groupId}/", base = DestinyAPI::URL_BASE, groupId = id)).await?;
+
+        Ok(Clan::from_string_response(clan)?)
     }
 
     pub async fn get_by_name(apiClient: ApiClient, name: &str) -> Result<Self> {
-        let clan = apiClient.get_parse::<Clan>(format!("{base}/GroupV2/Name/{groupName}/{groupType}/", base = DestinyAPI::URL_BASE, groupName = name, groupType = 1)).await?;
+        let clan = apiClient.get(format!("{base}/GroupV2/Name/{groupName}/{groupType}/", base = DestinyAPI::URL_BASE, groupName = name, groupType = 1)).await?;
 
-        Ok(clan)
+        Ok(Clan::from_string_response(clan)?)
+    }
+
+    fn from_string_response(response: String) -> Result<Self> {
+        let val: Value = serde_json::from_str(response.as_str())?;
+
+        Ok(serde_json::from_value::<Clan>(val["Response"]["detail"].clone())?)
     }
 }
 
