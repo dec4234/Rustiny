@@ -31,6 +31,8 @@ pub struct Clan {
     pub theme: String,
     pub avatarPath: String,
     pub bannerPath: String,
+    pub conversationId: String,
+    pub enableInvitationMessagingForAdmins: bool,
 }
 
 impl Clan {

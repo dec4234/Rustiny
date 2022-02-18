@@ -70,3 +70,4 @@ static CHARACTERS: &str = "Characters";
 
 // Other
 pub static URL_BASE: &str = "https://www.bungie.net/Platform";
+

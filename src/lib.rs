@@ -69,5 +69,16 @@ fn print_clan(clan: Clan) {
     println!("Motto - {}", clan.motto);
     println!("Allow Chat - {}", clan.allowChat);
     println!("Is Default Post Public - {}", clan.isDefaultPostPublic);
+    println!("Chat Security - {}", clan.chatSecurity);
+    println!("Locale - {}", clan.locale);
+    println!("Avatar Image Index - {}", clan.avatarImageIndex);
+    println!("Homepage - {}", clan.homepage);
+    println!("Membership Option - {}", clan.membershipOption);
+    println!("Default Publicity - {}", clan.defaultPublicity);
+    println!("Theme - {}", clan.theme);
+    println!("Avatar Path - {}", clan.avatarPath);
+    println!("Banner Path - {}", clan.bannerPath);
+    println!("Conversation ID - {}", clan.conversationId);
+    println!("Enable Invitation Messaging For Admins - {}", clan.enableInvitationMessagingForAdmins);
 
 }
