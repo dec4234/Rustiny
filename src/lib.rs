@@ -62,6 +62,9 @@ fn print_clan(clan: Clan) {
     println!("Clan Name - {}", clan.name);
     println!("Group Type - {}", clan.groupType);
     println!("Founder ID - {}", clan.founderId);
+    println!("Creation Date - {:?}", clan.creationDate.time());
+    println!("Modification Date - {:?}", clan.modificationDate.time());
+
     println!("Description - {}\n", clan.description);
     println!("Member Count - {}", clan.memberCount);
     println!("Is Public - {}", clan.isPublic);
@@ -81,4 +84,5 @@ fn print_clan(clan: Clan) {
     println!("Conversation ID - {}", clan.conversationId);
     println!("Enable Invitation Messaging For Admins - {}", clan.enableInvitationMessagingForAdmins);
 
+    println!("Ban Expiration Date - {:?}", clan.banExpireDate.time());
 }

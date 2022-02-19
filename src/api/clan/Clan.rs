@@ -1,8 +1,12 @@
+use std::time::{Duration, SystemTime};
 use reqwest::Response;
 use crate::api::DestinyAPI;
 use anyhow::{anyhow, Result};
+use chrono::NaiveDateTime;
+use humantime_serde::re::humantime::FormattedDuration;
 use serde::{Deserialize, Serialize};
 use crate::api::ApiClient::ApiClient;
+use crate::api::Util::date_deserializer;
 use serde_json::Value;
 
 #[derive(Deserialize, Serialize)]
@@ -13,6 +17,11 @@ pub struct Clan {
     pub groupType: u8,
     #[serde(rename = "membershipIdCreated")]
     pub founderId: String,
+    #[serde(with = "date_deserializer")]
+    pub creationDate: NaiveDateTime,
+    #[serde(with = "date_deserializer")]
+    pub modificationDate: NaiveDateTime,
+
     #[serde(rename = "about")]
     pub description: String,
     pub tags: Vec<String>,
@@ -33,6 +42,9 @@ pub struct Clan {
     pub bannerPath: String,
     pub conversationId: String,
     pub enableInvitationMessagingForAdmins: bool,
+
+    #[serde(with = "date_deserializer")]
+    pub banExpireDate: NaiveDateTime,
 }
 
 impl Clan {
