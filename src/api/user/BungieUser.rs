@@ -1,6 +1,10 @@
 use serde::{Deserialize};
-use serde_json::Value;
-use anyhow::Result;
+use serde_json::{json, Value};
+use anyhow::{anyhow, Result};
+use chrono::NaiveDateTime;
+use crate::api::ApiClient::ApiClient;
+use crate::api::DestinyAPI;
+use crate::api::Util::date_deserializer;
 
 #[derive(Deserialize, Debug, Clone)]
 pub struct BungieUser {
@@ -13,8 +17,8 @@ pub struct BungieUser {
 }
 
 impl BungieUser {
-    pub fn new(response: &str) -> Result<Self> {
-        let val: Value = serde_json::from_str(response)?;
+    pub fn new(val: Value) -> Result<Self> {
+        // let val: Value = serde_json::from_str(response)?;
         let list: Vec<DestinyProfile> = serde_json::from_value(val["Response"]["profiles"].clone())?;
 
         Ok(Self {
@@ -22,6 +26,35 @@ impl BungieUser {
             primary: BungieUser::get_primary_profile(list).unwrap(),
             bnet_membership: serde_json::from_value::<BnetMembership>(val["Response"]["bnetMembership"].clone())?,
         })
+    }
+
+    pub async fn get_user_by_id(client: &ApiClient, id: &str, platform: DestinyPlatform) -> Result<BungieUser> {
+        let url = format!("{}/Destiny2/{membershipType}/Profile/{membershipId}/LinkedProfiles/", DestinyAPI::URL_BASE, membershipId = id, membershipType = platform.get_code());
+        let val = serde_json::from_str::<Value>(client.get(url).await?.as_str())?;
+        BungieUser::new(val.clone())
+    }
+
+    pub async fn get_user_by_name_and_discrim_with_platform(client: &ApiClient, name_and_discrim: String, platform: DestinyPlatform) -> Result<BungieUser> {
+        let url = format!("{}/Destiny2/SearchDestinyPlayerByBungieName/{membershipType}/", DestinyAPI::URL_BASE, membershipType = platform.get_code());
+        let split: Vec<&str> = name_and_discrim.split("#").collect();
+
+        if split.len() != 2 {
+            return Err(anyhow!("The name of the user, when split at the # did not result in 2 components. Are you sure you passed a name and discriminator such as dec4234#9904 ?"));
+        }
+
+        let body = json!({
+            "displayName": split[0],
+            "displayNameCode": split[1],
+        });
+
+        let val = client.post_parse::<Value>(url, body.to_string()).await?;
+        let list = serde_json::from_value::<Vec<PartialProfileResponse>>(val["Response"].clone())?;
+
+        for profile in list {
+            return BungieUser::get_user_by_id(client, profile.membershipId.as_str(), DestinyPlatform::from_code(profile.membershipType).expect("Platform Code could not be deserialized")).await;
+        }
+
+        Err(anyhow!("Returned List was Empty, check your search query"))
     }
 
     /// Get the primary Profile associated with this account. A.k.a.
@@ -36,6 +69,12 @@ impl BungieUser {
 
         None
     }
+}
+
+#[derive(Deserialize)]
+struct PartialProfileResponse {
+    pub membershipId: String,
+    pub membershipType: i16,
 }
 
 /// A Destiny Profile, pertaining to an account on
@@ -66,6 +105,9 @@ pub struct DestinyProfile {
 
     #[serde(rename = "applicableMembershipTypes")]
     pub membership_types: Vec<i8>,
+
+    #[serde(with = "date_deserializer")]
+    pub dateLastPlayed: NaiveDateTime,
 }
 
 impl DestinyProfile {
@@ -86,7 +128,8 @@ impl Default for DestinyProfile {
             is_public: false,
             is_overridden: false,
             is_cross_save_primary: false,
-            membership_types: vec![]
+            membership_types: vec![],
+            dateLastPlayed: NaiveDateTime::from_timestamp(0, 0),
         }
     }
 }

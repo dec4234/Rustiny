@@ -45,7 +45,9 @@ pub mod date_deserializer {
 
     #[test]
     pub fn test_times() {
-        assert_eq!("2018-04-05 18:10:58", parse_from_string(String::from("2018-04-05T18:10:58.836Z")).unwrap().to_string());
-        assert_eq!("2018-04-05 18:10:58", parse_from_string(String::from("2018-04-05T18:10:58Z")).unwrap().to_string());
+        assert_eq!("2018-04-05 18:10:58", parse_from_string(String::from("2018-04-05T18:10:58.836Z")).expect("Extra Precise Failed").to_string());
+        println!("Extra Precise - Working");
+        assert_eq!("2018-04-05 18:10:58", parse_from_string(String::from("2018-04-05T18:10:58Z")).expect("Normal Precision Failed").to_string());
+        println!("Normal Precision - Working");
     }
 }

@@ -3,7 +3,6 @@ use reqwest::Response;
 use crate::api::DestinyAPI;
 use anyhow::{anyhow, Result};
 use chrono::NaiveDateTime;
-use humantime_serde::re::humantime::FormattedDuration;
 use serde::{Deserialize, Serialize};
 use crate::api::ApiClient::ApiClient;
 use crate::api::Util::date_deserializer;
@@ -11,6 +10,16 @@ use serde_json::Value;
 
 #[derive(Deserialize, Serialize)]
 pub struct Clan {
+    pub detail: ClanDetail,
+
+    pub alliedIds: Vec<i32>,
+    pub allianceStatus: i32,
+    pub groupJoinInviteCount: i32,
+    pub currentUserMembershipsInactiveForDestiny: bool,
+}
+
+#[derive(Deserialize, Serialize)]
+pub struct ClanDetail {
     #[serde(rename = "groupId")]
     pub id: String,
     pub name: String,
@@ -45,6 +54,7 @@ pub struct Clan {
 
     #[serde(with = "date_deserializer")]
     pub banExpireDate: NaiveDateTime,
+    pub features: ClanFeatures,
 }
 
 impl Clan {
@@ -63,8 +73,21 @@ impl Clan {
     fn from_string_response(response: String) -> Result<Self> {
         let val: Value = serde_json::from_str(response.as_str())?;
 
-        Ok(serde_json::from_value::<Clan>(val["Response"]["detail"].clone())?)
+        Ok(serde_json::from_value::<Clan>(val["Response"].clone())?)
     }
+}
+
+#[derive(Deserialize, Serialize)]
+pub struct ClanFeatures {
+    pub maximumMembers: i32,
+    pub maximumMembershipsOfGroupType: i32,
+    pub capabilities: i32,
+    pub membershipTypes: Vec<i32>,
+    pub invitePermissionOverride: bool,
+    pub updateCulturePermissionOverride: bool,
+    pub hostGuidedGamePermissionOverride: i32,
+    pub updateBannerPermissionOverride: bool,
+    pub joinLevel: i32,
 }
 
 /*

@@ -62,6 +62,26 @@ impl ApiClient {
         Ok(resp)
     }
 
+    pub async fn post(&self, url: String, body: String) -> Result<String> {
+        let client = Client::new();
+        let resp = client
+            .post(url.clone())
+            .body(body.clone())
+            .header("X-API-KEY", self.apikey.as_str())
+            .send()
+            .await?;
+
+        let text = resp.text().await?;
+
+        if self.is_debug_enabled().await {
+            println!("POST {}", url);
+            println!("Body - {}", body);
+            println!("{}", text.clone());
+        }
+
+        Ok(text)
+    }
+
 
     pub async fn get_parse<T: DeserializeOwned>(&self, url: String,) -> Result<T> {
         let text = self.get(url.clone()).await?;
@@ -70,6 +90,14 @@ impl ApiClient {
             println!("GET {}", url);
             println!("{}", &text);
         }
+
+        let r = serde_json::from_str::<T>(text.as_str())?;
+
+        Ok(r)
+    }
+
+    pub async fn post_parse<T: DeserializeOwned>(&self, url: String, body: String,) -> Result<T> {
+        let text = self.post(url, body).await?;
 
         let r = serde_json::from_str::<T>(text.as_str())?;
 

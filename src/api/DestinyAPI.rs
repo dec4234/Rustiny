@@ -24,10 +24,8 @@ impl ApiInterface {
         }
     }
 
-    pub async fn get_user(&self, id: &str, platform: DestinyPlatform) -> Result<BungieUser> {
-        let url = format!("{}/Destiny2/{membershipType}/Profile/{membershipId}/LinkedProfiles/", URL_BASE, membershipId = id, membershipType = platform.get_code());
-        //self.client.get_parse::<BungieUser>(url).await
-        BungieUser::new(self.client.get(url).await?.as_str())
+    pub async fn get_user_by_id(&self, id: &str, platform: DestinyPlatform) -> Result<BungieUser> {
+        BungieUser::get_user_by_id(&self.client, id, platform).await
     }
     /*
     pub async fn get_profile(&self, bungieID: &str, membershipType: u8) -> Option<BungieUser> {
@@ -69,5 +67,5 @@ static PROFILES: &str = "Profiles";
 static CHARACTERS: &str = "Characters";
 
 // Other
-pub static URL_BASE: &str = "https://www.bungie.net/Platform";
+pub const URL_BASE: &str = "https://www.bungie.net/Platform";
 
