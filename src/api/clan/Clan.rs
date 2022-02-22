@@ -7,6 +7,7 @@ use serde::{Deserialize, Serialize};
 use crate::api::ApiClient::ApiClient;
 use crate::api::Util::date_deserializer;
 use serde_json::Value;
+use crate::BungieUser;
 
 #[derive(Deserialize, Serialize)]
 pub struct Clan {
@@ -74,6 +75,14 @@ impl Clan {
         let val: Value = serde_json::from_str(response.as_str())?;
 
         Ok(serde_json::from_value::<Clan>(val["Response"].clone())?)
+    }
+
+    pub async fn get_members(&self, client: ApiClient) -> Result<Vec<BungieUser>> {
+        let mut list = vec![];
+
+
+
+        Ok(list)
     }
 }
 

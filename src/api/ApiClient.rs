@@ -32,10 +32,15 @@ impl ApiClient {
     }
 
     pub async fn get(&self, url: String) -> Result<String> {
+        self.get_params(url, HashMap::new()).await
+    }
+
+    pub async fn get_params(&self, url: String, map: HashMap<&str, &str>) -> Result<String> {
         let client = reqwest::Client::new();
         let resp = client
             .get(url.clone())
             .header("X-API-KEY", self.apikey.as_str())
+            .query(&map)
             .send()
             .await?;
 
@@ -50,24 +55,31 @@ impl ApiClient {
         Ok(text)
     }
 
-    pub async fn getWithParams(&self, url: &str, params: HashMap<&str, &str>) -> Result<Response> {
-        let client = Client::new();
-        let resp = client
-            .get(url)
-            .header("X-API-KEY", self.apikey.as_str())
-            .query(&params)
-            .send()
-            .await?;
+    pub async fn get_parse<T: DeserializeOwned>(&self, url: String,) -> Result<T> {
+        let text = self.get(url.clone()).await?;
 
-        Ok(resp)
+        let r = serde_json::from_str::<T>(text.as_str())?;
+
+        Ok(r)
+    }
+
+    pub async fn get_parse_params<T: DeserializeOwned>(&self, url: String, map: HashMap<&str, &str>) -> Result<T> {
+        let text = self.get_params(url, map).await?;
+
+        Ok(serde_json::from_str::<T>(text.as_str())?)
     }
 
     pub async fn post(&self, url: String, body: String) -> Result<String> {
+        self.post_params(url, body, HashMap::new()).await
+    }
+
+    pub async fn post_params(&self, url: String, body: String, map: HashMap<&str, &str>) -> Result<String> {
         let client = Client::new();
         let resp = client
             .post(url.clone())
             .body(body.clone())
             .header("X-API-KEY", self.apikey.as_str())
+            .query(&map)
             .send()
             .await?;
 
@@ -82,26 +94,18 @@ impl ApiClient {
         Ok(text)
     }
 
-
-    pub async fn get_parse<T: DeserializeOwned>(&self, url: String,) -> Result<T> {
-        let text = self.get(url.clone()).await?;
-
-        if self.is_debug_enabled().await {
-            println!("GET {}", url);
-            println!("{}", &text);
-        }
-
-        let r = serde_json::from_str::<T>(text.as_str())?;
-
-        Ok(r)
-    }
-
     pub async fn post_parse<T: DeserializeOwned>(&self, url: String, body: String,) -> Result<T> {
         let text = self.post(url, body).await?;
 
         let r = serde_json::from_str::<T>(text.as_str())?;
 
         Ok(r)
+    }
+
+    pub async fn post_parse_params<T: DeserializeOwned>(&self, url: String, body: String, map: HashMap<&str, &str>) -> Result<T> {
+        let text = self.post_params(url, body, map).await?;
+
+        Ok(serde_json::from_str::<T>(text.as_str())?)
     }
 }
 
