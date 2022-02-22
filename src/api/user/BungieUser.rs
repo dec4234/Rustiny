@@ -4,6 +4,7 @@ use anyhow::{anyhow, Result};
 use chrono::NaiveDateTime;
 use crate::api::ApiClient::ApiClient;
 use crate::api::DestinyAPI;
+use crate::api::DestinyAPI::URL_BASE;
 use crate::api::Util::date_deserializer;
 
 #[derive(Deserialize, Debug, Clone)]
@@ -28,10 +29,51 @@ impl BungieUser {
         })
     }
 
-    pub async fn get_user_by_id(client: &ApiClient, id: &str, platform: DestinyPlatform) -> Result<BungieUser> {
+    pub async fn get_user_by_id(client: &ApiClient, id: String, platform: DestinyPlatform) -> Result<BungieUser> {
         let url = format!("{}/Destiny2/{membershipType}/Profile/{membershipId}/LinkedProfiles/", DestinyAPI::URL_BASE, membershipId = id, membershipType = platform.get_code());
         let val = serde_json::from_str::<Value>(client.get(url).await?.as_str())?;
         BungieUser::new(val.clone())
+    }
+
+    pub async fn get_users_with_name(client: &ApiClient, name: String) -> Result<Vec<DestinyProfile>> {
+        let body = json!({
+            "displayNamePrefix": name,
+        });
+        let mut list: Vec<DestinyProfile> = vec![];
+        let mut count = 0;
+
+        loop {
+            let url = format!("{base}/User/Search/GlobalName/{page}/", base = URL_BASE, page = count);
+
+            let response = client.post(url, body.to_string()).await?;
+            let val = serde_json::from_str::<Value>(response.as_str())?["Response"].clone();
+
+                if let Some(map) = val.as_object() {
+                    if let Some(newVal) = val["searchResults"].clone().as_array() {
+                        for v in newVal {
+                            let profiles = serde_json::from_value::<Vec<DestinyProfile>>(v["destinyMemberships"].clone());
+
+                            if let Ok(profiles) = profiles {
+                                if !profiles.is_empty() {
+                                    if let Some(user) = BungieUser::get_primary_profile(profiles) {
+                                        list.push(user);
+                                    }
+                                }
+                            } else {
+                                return Err(anyhow!("Something went wrong when deserializing list of profiles!"));
+                            }
+                        }
+                    } else {
+                        break;
+                    }
+                } else {
+                    break;
+                }
+
+            count += 1;
+        }
+
+        Ok(list)
     }
 
     pub async fn get_user_by_name_and_discrim_with_platform(client: &ApiClient, name_and_discrim: String, platform: DestinyPlatform) -> Result<BungieUser> {
@@ -50,8 +92,8 @@ impl BungieUser {
         let val = client.post_parse::<Value>(url, body.to_string()).await?;
         let list = serde_json::from_value::<Vec<PartialProfileResponse>>(val["Response"].clone())?;
 
-        for profile in list {
-            return BungieUser::get_user_by_id(client, profile.membershipId.as_str(), DestinyPlatform::from_code(profile.membershipType).expect("Platform Code could not be deserialized")).await;
+        if let Some(profile) = list.into_iter().next() {
+            return BungieUser::get_user_by_id(client, profile.membershipId, DestinyPlatform::from_code(profile.membershipType).expect("Platform Code could not be deserialized")).await;
         }
 
         Err(anyhow!("Returned List was Empty, check your search query"))
@@ -69,12 +111,23 @@ impl BungieUser {
 
         None
     }
+
+    fn get_primary_partial_profile(list: Vec<PartialProfileResponse>) -> Option<PartialProfileResponse> {
+        for info in list {
+            if info.crossSaveOverride == info.membershipType || info.crossSaveOverride == 0 {
+                return Some(info);
+            }
+        }
+
+        None
+    }
 }
 
 #[derive(Deserialize)]
 struct PartialProfileResponse {
     pub membershipId: String,
     pub membershipType: i16,
+    pub crossSaveOverride: i16,
 }
 
 /// A Destiny Profile, pertaining to an account on
@@ -98,21 +151,28 @@ pub struct DestinyProfile {
 
     #[serde(rename = "isPublic")]
     pub is_public: bool,
+    #[serde(default)]
     #[serde(rename = "isOverridden")]
     pub is_overridden: bool,
+    #[serde(default)]
     #[serde(rename = "isCrossSavePrimary")]
     pub is_cross_save_primary: bool,
 
     #[serde(rename = "applicableMembershipTypes")]
     pub membership_types: Vec<i8>,
 
+    #[serde(default = "date_deserializer::default")]
     #[serde(with = "date_deserializer")]
-    pub dateLastPlayed: NaiveDateTime,
+    pub dateLastPlayed: Option<NaiveDateTime>,
 }
 
 impl DestinyProfile {
     pub fn get_platform(&self) -> Option<DestinyPlatform> {
         DestinyPlatform::from_code(self.platform)
+    }
+
+    pub async fn get_bungie_user(&self, client: &ApiClient) -> Result<BungieUser> {
+        BungieUser::get_user_by_id(client, self.id.clone(), DestinyPlatform::from_code(self.platform).unwrap()).await
     }
 }
 
@@ -129,7 +189,7 @@ impl Default for DestinyProfile {
             is_overridden: false,
             is_cross_save_primary: false,
             membership_types: vec![],
-            dateLastPlayed: NaiveDateTime::from_timestamp(0, 0),
+            dateLastPlayed: None,
         }
     }
 }

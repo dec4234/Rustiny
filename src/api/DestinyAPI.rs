@@ -24,7 +24,7 @@ impl ApiInterface {
         }
     }
 
-    pub async fn get_user_by_id(&self, id: &str, platform: DestinyPlatform) -> Result<BungieUser> {
+    pub async fn get_user_by_id(&self, id: String, platform: DestinyPlatform) -> Result<BungieUser> {
         BungieUser::get_user_by_id(&self.client, id, platform).await
     }
     /*

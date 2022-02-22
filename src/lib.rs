@@ -10,14 +10,35 @@ async fn get_api() -> ApiInterface {
 
 #[tokio::test]
 async fn get_user() {
-    println!("Get User By ID");
-    let user = get_api().await.get_user_by_id("4611686018468620320", DestinyPlatform::Steam).await.unwrap();
+    println!("-----Get User By ID-----");
+    let user = get_api().await.get_user_by_id(String::from("4611686018468620320"), DestinyPlatform::Steam).await.unwrap();
     print_user(user);
 }
 
 #[tokio::test]
+async fn get_users_by_name() {
+    println!("-----Get Users By Name-----");
+    println!();
+    let list = BungieUser::get_users_with_name(&get_api().await.client, String::from("Ghost")).await.unwrap();
+
+    for user in list {
+        println!("User ID: {}", user.id);
+    }
+}
+
+#[tokio::test]
+async fn get_user_by_name_one() {
+    println!("-----Get Users By Name But Only One Person-----\n");
+    let list = BungieUser::get_users_with_name(&get_api().await.client, String::from("dec4234")).await.unwrap();
+
+    for user in list {
+        println!("User ID: {}", user.id);
+    }
+}
+
+#[tokio::test]
 async fn get_user_by_name_and_discriminator() {
-    println!("Get User By Name And Discriminator");
+    println!("-----Get User By Name And Discriminator-----");
     let user = BungieUser::get_user_by_name_and_discrim_with_platform(&get_api().await.client, String::from("dec4234#9904"), DestinyPlatform::All).await.unwrap();
     print_user(user);
 }
@@ -37,7 +58,9 @@ fn print_user(user: BungieUser) {
     println!("--------Destiny Membership Info--------");
     println!("ID - {}", user.primary.id);
     println!("Platform Type - {}", user.primary.platform);
-    println!("Last Played - {}", user.primary.dateLastPlayed);
+    if let Some(date) = user.primary.dateLastPlayed {
+        println!("Last Played - {}", date);
+    }
 
     println!("Platform Display Name - {}", user.primary.platform_display_name);
     println!("Cross Save Override - {}", user.primary.cross_save_override);
@@ -88,8 +111,8 @@ fn print_clan(clan: Clan) {
     println!("Clan Name - {}", clan.detail.name);
     println!("Group Type - {}", clan.detail.groupType);
     println!("Founder ID - {}", clan.detail.founderId);
-    println!("Creation Date - {}", clan.detail.creationDate);
-    println!("Modification Date - {}", clan.detail.modificationDate);
+    println!("Creation Date - {}", clan.detail.creationDate.unwrap());
+    println!("Modification Date - {}", clan.detail.modificationDate.unwrap());
 
     println!("Description - {}\n", clan.detail.description);
     println!("Member Count - {}", clan.detail.memberCount);
@@ -110,7 +133,7 @@ fn print_clan(clan: Clan) {
     println!("Conversation ID - {}", clan.detail.conversationId);
     println!("Enable Invitation Messaging For Admins - {}", clan.detail.enableInvitationMessagingForAdmins);
 
-    println!("Ban Expiration Date - {}", clan.detail.banExpireDate);
+    println!("Ban Expiration Date - {}", clan.detail.banExpireDate.unwrap());
 
     println!("Number of Allied IDs - {}", clan.alliedIds.len());
     println!("Alliance Status - {}", clan.allianceStatus);

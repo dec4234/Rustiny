@@ -27,9 +27,9 @@ pub struct ClanDetail {
     #[serde(rename = "membershipIdCreated")]
     pub founderId: String,
     #[serde(with = "date_deserializer")]
-    pub creationDate: NaiveDateTime,
+    pub creationDate: Option<NaiveDateTime>,
     #[serde(with = "date_deserializer")]
-    pub modificationDate: NaiveDateTime,
+    pub modificationDate: Option<NaiveDateTime>,
 
     #[serde(rename = "about")]
     pub description: String,
@@ -53,7 +53,7 @@ pub struct ClanDetail {
     pub enableInvitationMessagingForAdmins: bool,
 
     #[serde(with = "date_deserializer")]
-    pub banExpireDate: NaiveDateTime,
+    pub banExpireDate: Option<NaiveDateTime>,
     pub features: ClanFeatures,
 }
 

@@ -24,7 +24,7 @@ println!("{}", BungieUser::get_user_by_name_and_discrim_with_platform(client, St
 ## Development Outlook
 1. ### Stats
    1. Users
-   2. Clans **~~<--~~ Here**
+   2. Clans **<-- Here**
    3. Characters
    4. Activity History / PGCRs
    5. Manifest
