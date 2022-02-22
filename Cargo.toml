@@ -2,6 +2,12 @@
 name = "Rustiny"
 version = "0.1.0"
 edition = "2021"
+license = "MIT"
+description = "A wrapper for the Destiny 2 / Bungie.net REST API"
+homepage = "https://github.com/dec4234/Rustiny"
+documentation = "https://github.com/dec4234/Rustiny"
+repository = "https://github.com/dec4234/Rustiny"
+readme = "README.md"
 
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
