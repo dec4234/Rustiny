@@ -156,3 +156,12 @@ fn print_clan(clan: Clan) {
     println!("Update Banner Permission Override - {}", clan.detail.features.updateBannerPermissionOverride);
     println!("Join Level - {}", clan.detail.features.joinLevel);
 }
+
+#[tokio::test]
+async fn clan_members() {
+    let clan = Clan::get_by_id(get_api().await.client, 3074427).await.unwrap();
+
+    for m in clan.get_members(get_api().await.client).await.unwrap() {
+        println!("{} - {}", m.destinyUserInfo.displayName, m.isOnline);
+    }
+}

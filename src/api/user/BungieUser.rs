@@ -1,4 +1,4 @@
-use serde::{Deserialize};
+use serde::{Deserialize, Serialize};
 use serde_json::{json, Value};
 use anyhow::{anyhow, Result};
 use chrono::NaiveDateTime;
@@ -237,7 +237,7 @@ impl DestinyPlatform {
     }
 }
 
-#[derive(Deserialize, Debug, Clone)]
+#[derive(Deserialize, Serialize, Debug, Clone)]
 pub struct BnetMembership {
     #[serde(rename = "supplementalDisplayName")]
     pub combined_name: String,

@@ -7,6 +7,8 @@ use serde::{Deserialize, Serialize};
 use crate::api::ApiClient::ApiClient;
 use crate::api::Util::date_deserializer;
 use serde_json::Value;
+use crate::api::DestinyAPI::URL_BASE;
+use crate::api::user::BungieUser::BnetMembership;
 use crate::BungieUser;
 
 #[derive(Deserialize, Serialize)]
@@ -77,10 +79,13 @@ impl Clan {
         Ok(serde_json::from_value::<Clan>(val["Response"].clone())?)
     }
 
-    pub async fn get_members(&self, client: ApiClient) -> Result<Vec<BungieUser>> {
+    pub async fn get_members(&self, client: ApiClient) -> Result<Vec<ClanMember>> {
         let mut list = vec![];
 
-
+        let url = format!("{}/GroupV2/{groupId}/Members/", URL_BASE, groupId = self.detail.id);
+        let resp = client.get(url).await?;
+        let val = serde_json::from_str::<Value>(resp.as_str())?;
+        list = serde_json::from_value::<Vec<ClanMember>>(val["Response"]["results"].clone())?;
 
         Ok(list)
     }
@@ -97,6 +102,33 @@ pub struct ClanFeatures {
     pub hostGuidedGamePermissionOverride: i32,
     pub updateBannerPermissionOverride: bool,
     pub joinLevel: i32,
+}
+
+#[derive(Deserialize, Serialize)]
+pub struct ClanMember {
+    pub memberType: i16,
+    pub isOnline: bool,
+    pub lastOnlineStatusChange: String,
+    pub groupId: String,
+    pub destinyUserInfo: DestinyUserInfo,
+    pub bungieNetUserInfo: BnetMembership,
+    #[serde(with = "date_deserializer")]
+    pub joinDate: Option<NaiveDateTime>,
+}
+
+#[derive(Deserialize, Serialize)]
+pub struct DestinyUserInfo {
+    pub LastSeenDisplayName: String,
+    pub LastSeenDisplayNameType: i16,
+    pub iconPath: String,
+    pub crossSaveOverride: i16,
+    pub applicableMembershipTypes: Vec<i16>,
+    pub isPublic: bool,
+    pub membershipType: i16,
+    pub membershipId: String,
+    pub displayName: String,
+    pub bungieGlobalDisplayName: String,
+    pub bungieGlobalDisplayNameCode: Option<i32>,
 }
 
 /*
