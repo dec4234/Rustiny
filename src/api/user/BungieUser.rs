@@ -81,7 +81,7 @@ impl BungieUser {
         let split: Vec<&str> = name_and_discrim.split("#").collect();
 
         if split.len() != 2 {
-            return Err(anyhow!("The name of the user, when split at the # did not result in 2 components. Are you sure you passed a name and discriminator such as dec4234#9904 ?"));
+            return Err(anyhow!("{} - The name of the user, when split at the # did not result in 2 components. Are you sure you passed a name and discriminator such as dec4234#9904 ?", name_and_discrim));
         }
 
         let body = json!({

@@ -108,6 +108,7 @@ pub struct ClanFeatures {
 pub struct ClanMember {
     pub memberType: i16,
     pub isOnline: bool,
+    /// The epoch date indicating when the user last went online/offline (need to implement custom deserializer)
     pub lastOnlineStatusChange: String,
     pub groupId: String,
     pub destinyUserInfo: DestinyUserInfo,

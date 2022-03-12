@@ -1,10 +1,11 @@
+use crate::api::activity::activity::PgcrScaper;
 use crate::api::DestinyAPI::ApiInterface;
 use crate::api::user::BungieUser::{BungieUser, DestinyPlatform};
 use crate::api::clan::Clan::Clan;
 
 mod api;
 
-async fn get_api() -> ApiInterface {
+pub async fn get_api() -> ApiInterface {
     ApiInterface::new("c57f52d5d071428fb8ff8684ba938212", true).await
 }
 
@@ -45,7 +46,7 @@ async fn get_user_by_name_and_discriminator() {
 
 #[tokio::test]
 async fn test_name_splitting() {
-    println!("Test Name Splitting - Failure Intended");
+    println!("Test Name Splitting");
     let user = BungieUser::get_user_by_name_and_discrim_with_platform(&get_api().await.client, String::from("dec4234"), DestinyPlatform::All).await;
 
     if let Ok(user) = user {
@@ -164,4 +165,9 @@ async fn clan_members() {
     for m in clan.get_members(get_api().await.client).await.unwrap() {
         println!("{} - {}", m.destinyUserInfo.displayName, m.isOnline);
     }
+}
+
+#[tokio::test]
+pub async fn test_pgcr_one() {
+    let pgcr = PgcrScaper::new(&get_api().await.client).await.get_pgcr(1).await.unwrap();
 }

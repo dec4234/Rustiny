@@ -20,6 +20,11 @@ impl ApiClient {
         }
     }
 
+    /// Enables Debug Mode
+    ///
+    /// Prints all requests and their responses as they come through
+    /// usually only needed for development of the API but may be useful
+    /// to someone wanting to learn the inner-workings of the system.
     pub async fn enable_debug_mode(self) -> Self {
         let mut temp = self.DEBUG_MODE.lock().await;
         *temp = AtomicBool::new(true);
@@ -29,6 +34,14 @@ impl ApiClient {
 
     pub async fn is_debug_enabled(&self) -> bool {
         *self.DEBUG_MODE.lock().await.get_mut()
+    }
+
+    /// Clones the ApiClient
+    pub async fn clone(&self) -> Self {
+        Self {
+            apikey: self.apikey.clone(),
+            DEBUG_MODE: Mutex::new(AtomicBool::new(self.is_debug_enabled().await)),
+        }
     }
 
     pub async fn get(&self, url: String) -> Result<String> {
