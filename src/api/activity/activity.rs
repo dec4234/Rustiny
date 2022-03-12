@@ -18,10 +18,14 @@ impl PgcrScraper {
     }
 
     pub async fn get_pgcr(&self, id: i64) -> Result<PGCR> {
+        Ok(PGCR::new(self.get_pgcr_raw(id).await?["Response"].clone())?)
+    }
+
+    pub async fn get_pgcr_raw(&self, id: i64) -> Result<Value> {
         let url = format!("https://stats.bungie.net/Platform/Destiny2/Stats/PostGameCarnageReport/{activityId}/", activityId = id);
         let resp = self.client.get_parse::<Value>(url).await?;
 
-        Ok(PGCR::new(resp["Response"].clone())?)
+        Ok(resp)
     }
 }
 
@@ -33,7 +37,6 @@ pub struct PGCR {
     pub startingPhaseIndex: i8,
     pub activityWasStartedFromBeginning: bool,
     pub activityDetails: ActivityDetails,
-
 }
 
 impl PGCR {
