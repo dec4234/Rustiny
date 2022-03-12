@@ -6,11 +6,11 @@ use chrono::NaiveDateTime;
 use serde_json::Value;
 use crate::api::Util::date_deserializer;
 
-pub struct PgcrScaper {
+pub struct PgcrScraper {
     client: ApiClient,
 }
 
-impl PgcrScaper {
+impl PgcrScraper {
     pub async fn new(client: &ApiClient) -> Self {
         Self {
             client: client.clone().await

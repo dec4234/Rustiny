@@ -1,11 +1,11 @@
-use crate::api::activity::activity::PgcrScaper;
+use crate::api::activity::activity::PgcrScraper;
 use crate::api::DestinyAPI::ApiInterface;
 use crate::api::user::BungieUser::{BungieUser, DestinyPlatform};
 use crate::api::clan::Clan::Clan;
 
-mod api;
+pub mod api;
 
-pub async fn get_api() -> ApiInterface {
+async fn get_api() -> ApiInterface {
     ApiInterface::new("c57f52d5d071428fb8ff8684ba938212", true).await
 }
 
@@ -169,5 +169,5 @@ async fn clan_members() {
 
 #[tokio::test]
 pub async fn test_pgcr_one() {
-    let pgcr = PgcrScaper::new(&get_api().await.client).await.get_pgcr(1).await.unwrap();
+    let pgcr = PgcrScraper::new(&get_api().await.client).await.get_pgcr(1).await.unwrap();
 }
