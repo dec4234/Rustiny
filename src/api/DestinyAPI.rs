@@ -28,9 +28,14 @@ impl ApiInterface {
     ///
     /// For example
     /// ```rust
-    /// let interface = ApiInterface::new("YOUR API KEY HERE", true).await;
-    /// let user = interface.get_user_by_id(String::from("4611686018468620320"), DestinyPlatform::Steam).await.unwrap();
-    /// println!("{}", user.primary.id);
+    /// use Rustiny::api::DestinyAPI::ApiInterface;
+    /// use Rustiny::api::user::BungieUser::DestinyPlatform;
+    ///
+    /// async fn run() {
+    ///     let interface = ApiInterface::new("YOUR API KEY HERE", true).await;
+    ///     let user = interface.get_user_by_id(String::from("4611686018468620320"), DestinyPlatform::Steam).await.unwrap();
+    ///     println!("{}", user.primary.id);
+    /// }
     /// ```
     pub async fn get_user_by_id(&self, id: String, platform: DestinyPlatform) -> Result<BungieUser> {
         BungieUser::get_user_by_id(&self.client, id, platform).await

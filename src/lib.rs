@@ -2,6 +2,7 @@ use crate::api::activity::activity::PgcrScraper;
 use crate::api::DestinyAPI::ApiInterface;
 use crate::api::user::BungieUser::{BungieUser, DestinyPlatform};
 use crate::api::clan::Clan::Clan;
+use crate::api::user::DestinyCharacter::DestinyCharacter;
 
 pub mod api;
 
@@ -13,7 +14,7 @@ async fn get_api() -> ApiInterface {
 async fn get_user() {
     println!("-----Get User By ID-----");
     let user = get_api().await.get_user_by_id(String::from("4611686018468620320"), DestinyPlatform::Steam).await.unwrap();
-    print_user(user);
+    print_user(&user);
 }
 
 #[tokio::test]
@@ -38,10 +39,26 @@ async fn get_user_by_name_one() {
 }
 
 #[tokio::test]
-async fn get_user_by_name_and_discriminator() {
+async fn get_user_by_name_and_discriminator_and_characters() {
     println!("-----Get User By Name And Discriminator-----");
     let user = BungieUser::get_user_by_name_and_discrim_with_platform(&get_api().await.client, String::from("dec4234#9904"), DestinyPlatform::All).await.unwrap();
-    print_user(user);
+    print_user(&user);
+
+    println!("\n-----Get Characters-----");
+    get_characters(&user).await;
+}
+
+async fn get_characters(user: &BungieUser) {
+    for c in user.get_characters(&get_api().await.client).await.unwrap() {
+        println!("\n-----Character-----");
+        print_character(c);
+    }
+}
+
+fn print_character(c: DestinyCharacter) {
+    println!("ID - {}", c.characterId);
+    println!("Date Last Played - {}", c.dateLastPlayed.unwrap());
+    println!("Light Level - {}", c.light);
 }
 
 #[tokio::test]
@@ -54,7 +71,7 @@ async fn test_name_splitting() {
     }
 }
 
-fn print_user(user: BungieUser) {
+fn print_user(user: &BungieUser) {
     println!();
     println!("--------Destiny Membership Info--------");
     println!("ID - {}", user.primary.id);
@@ -75,7 +92,7 @@ fn print_user(user: BungieUser) {
 
 
     print!("Applicable Membership Types - [");
-    for i in user.primary.membership_types {
+    for i in &user.primary.membership_types {
         print!(" {},", i);
     }
     println!(" ]\n");

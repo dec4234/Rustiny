@@ -1,3 +1,4 @@
+use std::fmt::format;
 use serde::{Deserialize, Serialize};
 use serde_json::{json, Value};
 use anyhow::{anyhow, Result};
@@ -6,6 +7,7 @@ use crate::api::ApiClient::ApiClient;
 use crate::api::DestinyAPI;
 use crate::api::DestinyAPI::URL_BASE;
 use crate::api::Util::date_deserializer;
+use crate::api::user::DestinyCharacter::DestinyCharacter;
 
 #[derive(Deserialize, Debug, Clone)]
 pub struct BungieUser {
@@ -120,6 +122,22 @@ impl BungieUser {
         }
 
         None
+    }
+
+    pub async fn get_characters(&self, client: &ApiClient) -> Result<Vec<DestinyCharacter>> {
+        let mut vec = vec![];
+
+        let resp = client.get(format!("{}/Destiny2/{membershipType}/Profile/{destinyMembershipId}/?components=Characters", URL_BASE, membershipType = self.primary.platform, destinyMembershipId = self.primary.id)).await?;
+
+        let val = serde_json::from_str::<Value>(resp.as_str())?["Response"]["characters"]["data"].clone();
+
+        if let Some(map) = val.as_object() {
+            for (k, v) in map {
+                vec.push(DestinyCharacter::new(v.clone())?)
+            }
+        }
+
+        Ok(vec)
     }
 }
 
