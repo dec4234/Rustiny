@@ -35,7 +35,7 @@ println!("{}", BungieUser::get_user_by_name_and_discrim_with_platform(client, St
    4. Clans
    5. Social
 
-## Version 0.1.2
+## Version 0.1.11
 - Removed get_api() access 
 - Added mod.rs to each folder
 - Added DestinyCharacter
