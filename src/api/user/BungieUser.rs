@@ -151,7 +151,7 @@ struct PartialProfileResponse {
 /// A Destiny Profile, pertaining to an account on
 /// a specific platform. Due to cross-save, a user
 /// can have multiple profiles on their account.
-#[derive(Deserialize, Debug, Clone)]
+#[derive(Deserialize, Serialize, Debug, Clone)]
 pub struct DestinyProfile {
     #[serde(rename = "membershipId")]
     pub id: String,

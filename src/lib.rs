@@ -1,4 +1,4 @@
-use crate::api::activity::activity::PgcrScraper;
+use crate::api::activity::activity::{PGCR, PgcrScraper};
 use crate::api::DestinyAPI::ApiInterface;
 use crate::api::user::BungieUser::{BungieUser, DestinyPlatform};
 use crate::api::clan::Clan::Clan;
@@ -188,6 +188,11 @@ async fn clan_members() {
 #[tokio::test]
 pub async fn test_pgcr_one() {
     let pgcr = PgcrScraper::new(&get_api().await.client).await.get_pgcr(1).await.unwrap();
+    print_pgcr(&pgcr);
+}
+
+fn print_pgcr(pgcr: &PGCR) {
+    println!("Assists Display Value - {}", pgcr.entries.get(0).unwrap().values.completed.basic.displayValue);
 }
 
 #[tokio::test]

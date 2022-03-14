@@ -24,8 +24,8 @@ println!("{}", BungieUser::get_user_by_name_and_discrim_with_platform(client, St
 ## Development Outlook
 1. ### Stats
    1. Users
-   2. Clans **<-- Here**
-   3. Characters
+   2. Clans 
+   3. Characters **<-- Here**
    4. Activity History / PGCRs
    5. Manifest
 2. ### OAuth
@@ -34,5 +34,15 @@ println!("{}", BungieUser::get_user_by_name_and_discrim_with_platform(client, St
    3. Users
    4. Clans
    5. Social
+
+## Version 0.1.2
+- Removed get_api() access 
+- Added mod.rs to each folder
+- Added DestinyCharacter
+- Added Manifest
+- Added small tests for characters and manifest
+- Added get_pgcr_raw() to PGCRScraper
+- Fix documentation for get_user_by_id()
+- Add new macro to place struct inside of auto-generated structs for PGCR values
 
 

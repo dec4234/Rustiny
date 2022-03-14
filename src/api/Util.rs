@@ -62,7 +62,6 @@ pub mod date_deserializer {
 
 #[macro_use]
 pub mod macros {
-
     /// Create A Hashmap
     #[macro_export]
     macro_rules! map {
@@ -74,4 +73,31 @@ pub mod macros {
             }
         }
     }
+
+    /**
+    Used primarily in PGCRs to place a struct inside
+    of the values structs.
+
+    Make a struct with whatever name is given
+    **/
+    #[macro_export]
+    macro_rules! basic_wrapped {
+        ($($a: ident),+) => {
+        $(
+            #[derive(Deserialize, Serialize, Clone)]
+            pub struct $a {
+                pub basic: Basic,
+            }
+        )+
+        };
+    }
+
+    use serde::{Deserialize, Serialize};
+
+    #[derive(Deserialize, Serialize, Clone)]
+    pub struct Basic {
+        pub value: f32,
+        pub displayValue: String,
+    }
 }
+
