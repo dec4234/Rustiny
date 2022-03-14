@@ -4,3 +4,4 @@ pub mod user;
 pub mod clan;
 pub mod Util;
 pub mod activity;
+pub mod manifest;

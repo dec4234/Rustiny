@@ -2,6 +2,7 @@ use crate::api::activity::activity::PgcrScraper;
 use crate::api::DestinyAPI::ApiInterface;
 use crate::api::user::BungieUser::{BungieUser, DestinyPlatform};
 use crate::api::clan::Clan::Clan;
+use crate::api::manifest::manifest::{Manifest, ManifestEntityType};
 use crate::api::user::DestinyCharacter::DestinyCharacter;
 
 pub mod api;
@@ -187,4 +188,15 @@ async fn clan_members() {
 #[tokio::test]
 pub async fn test_pgcr_one() {
     let pgcr = PgcrScraper::new(&get_api().await.client).await.get_pgcr(1).await.unwrap();
+}
+
+#[tokio::test]
+pub async fn manifest_test() {
+    let man = Manifest::new(get_api().await.client);
+
+    let vec = vec!["144602215", "1735777505", "1935470627", "1943323491", "2996146975", "392767087", "4244567218"];
+
+    for s in vec {
+        println!("{} = {}", s, man.manifest_get(ManifestEntityType::ITEMSTAT, String::from(s)).await.unwrap());
+    }
 }

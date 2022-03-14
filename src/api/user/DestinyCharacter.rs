@@ -61,20 +61,26 @@ pub struct LevelProgression {
     pub weeklyProgress: i16,
 }
 
+/**
+Stats about this character such as your
+recovery, discipline, etc.
+
+They are hashed in the response but renamed here
+**/
 #[derive(Deserialize, Serialize, Clone)]
 pub struct CharacterStats {
     #[serde(rename = "144602215")]
-    pub m144602215: i16,
+    pub intellect: i16,
     #[serde(rename = "1735777505")]
-    pub m1735777505: i16,
+    pub discipline: i16,
     #[serde(rename = "1935470627")]
-    pub m1935470627: i16,
+    pub power: i16,
     #[serde(rename = "1943323491")]
-    pub m1943323491: i16,
+    pub recovery: i16,
     #[serde(rename = "2996146975")]
-    pub m2996146975: i16,
+    pub mobility: i16,
     #[serde(rename = "392767087")]
-    pub m392767087: i16,
+    pub resilience: i16,
     #[serde(rename = "4244567218")]
-    pub m4244567218: i16,
+    pub strength: i16,
 }
