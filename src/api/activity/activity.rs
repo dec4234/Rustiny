@@ -8,7 +8,7 @@ use crate::api::clan::Clan::DestinyUserInfo;
 use crate::api::user::BungieUser::DestinyProfile;
 use crate::api::Util::date_deserializer;
 use crate::api::Util::macros;
-use crate::basic_wrapped;
+use crate::basic;
 use crate::api::Util::macros::Basic;
 
 pub struct PgcrScraper {
@@ -43,12 +43,21 @@ pub struct PGCR {
     pub activityWasStartedFromBeginning: bool,
     pub activityDetails: ActivityDetails,
     pub entries: Vec<Entry>,
+    pub teams: Vec<Team>,
 }
 
 impl PGCR {
     pub fn new(val: Value) -> Result<Self> {
         Ok(serde_json::from_value::<PGCR>(val)?)
     }
+}
+
+#[derive(Deserialize, Serialize, Clone)]
+pub struct Team {
+    pub teamId: i16,
+    pub teamName: String,
+    pub standing: standing,
+    pub score: Score,
 }
 
 #[derive(Deserialize, Serialize, Clone)]
@@ -62,7 +71,7 @@ pub struct ActivityDetails {
     pub membershipType: i8,
 }
 
-basic_wrapped!(Score);
+basic!(Score);
 
 #[derive(Deserialize, Serialize, Clone)]
 pub struct Entry {
@@ -70,7 +79,8 @@ pub struct Entry {
     pub score: Score,
     pub player: Player,
     pub characterId: String,
-    pub values: Values,
+    pub values: EntryValues,
+    pub extended: Extended,
 }
 
 #[derive(Deserialize, Serialize, Clone)]
@@ -85,11 +95,15 @@ pub struct Player {
     pub emblemHash: i64,
 }
 
-basic_wrapped!(assists, completed, deaths, kills, opponentsDefeated, efficiency, killsDeathsRatio, killsDeathsAssists, activityDurationSeconds, completionReason);
-basic_wrapped!(fireteamId, startSeconds, timePlayedSeconds, playerCount, teamScore);
+// Score defined above
+basic!(assists, completed, deaths, kills, opponentsDefeated, efficiency, killsDeathsRatio, killsDeathsAssists, activityDurationSeconds, completionReason);
+basic!(fireteamId, startSeconds, timePlayedSeconds, playerCount, teamScore);
+
+// Optionally included
+basic!(averageScorePerKill, averageScorePerLife, standing, team);
 
 #[derive(Deserialize, Serialize, Clone)]
-pub struct Values {
+pub struct EntryValues {
     pub assists: assists,
     pub completed: completed,
     pub deaths: deaths,
@@ -106,4 +120,43 @@ pub struct Values {
     pub timePlayedSeconds: timePlayedSeconds,
     pub playerCount: playerCount,
     pub teamScore: teamScore,
+
+    // Optional - PvP stuff
+    pub averageScorePerKill: Option<averageScorePerKill>,
+    pub averageScorePerLife: Option<averageScorePerLife>,
+    pub standing: Option<standing>,
+    pub team: Option<team>,
+
 }
+
+#[derive(Deserialize, Serialize, Clone)]
+pub struct Extended {
+    pub values: ExtendedValues,
+    pub weapons: Option<Vec<WeaponData>>,
+}
+
+#[derive(Deserialize, Serialize, Clone)]
+pub struct WeaponData {
+    pub referenceId: i64,
+    pub values: WeaponDataValues,
+}
+
+basic!(uniqueWeaponKills, uniqueWeaponPrecisionKills, uniqueWeaponKillsPrecisionKills);
+
+#[derive(Deserialize, Serialize, Clone)]
+pub struct WeaponDataValues {
+    pub uniqueWeaponKills: uniqueWeaponKills,
+    pub uniqueWeaponPrecisionKills: uniqueWeaponPrecisionKills,
+    pub uniqueWeaponKillsPrecisionKills: uniqueWeaponKillsPrecisionKills,
+}
+
+basic!(precisionKills, weaponKillsGrenade, weaponKillsMelee, weaponKillsSuper, weaponKillsAbility);
+basic!(medalUnknown, allMedalsEarned);
+
+#[derive(Deserialize, Serialize, Clone)]
+pub struct ExtendedValues {
+
+}
+
+// Trials Of Osiris: 9496960718
+// VotD: 10405562745

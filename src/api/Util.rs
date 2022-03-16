@@ -81,7 +81,7 @@ pub mod macros {
     Make a struct with whatever name is given
     **/
     #[macro_export]
-    macro_rules! basic_wrapped {
+    macro_rules! basic {
         ($($a: ident),+) => {
         $(
             #[derive(Deserialize, Serialize, Clone)]

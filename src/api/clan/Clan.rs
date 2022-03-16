@@ -11,7 +11,7 @@ use crate::api::DestinyAPI::URL_BASE;
 use crate::api::user::BungieUser::BnetMembership;
 use crate::BungieUser;
 
-#[derive(Deserialize, Serialize)]
+#[derive(Deserialize, Serialize, Clone)]
 pub struct Clan {
     pub detail: ClanDetail,
 
@@ -21,7 +21,38 @@ pub struct Clan {
     pub currentUserMembershipsInactiveForDestiny: bool,
 }
 
-#[derive(Deserialize, Serialize)]
+impl Clan {
+    pub async fn get_by_id(apiClient: ApiClient, id: i32) -> Result<Self> {
+        let clan = apiClient.get(format!("{base}/GroupV2/{groupId}/", base = DestinyAPI::URL_BASE, groupId = id)).await?;
+
+        Ok(Clan::from_string_response(clan)?)
+    }
+
+    pub async fn get_by_name(apiClient: ApiClient, name: &str) -> Result<Self> {
+        let clan = apiClient.get(format!("{base}/GroupV2/Name/{groupName}/{groupType}/", base = DestinyAPI::URL_BASE, groupName = name, groupType = 1)).await?;
+
+        Ok(Clan::from_string_response(clan)?)
+    }
+
+    fn from_string_response(response: String) -> Result<Self> {
+        let val: Value = serde_json::from_str(response.as_str())?;
+
+        Ok(serde_json::from_value::<Clan>(val["Response"].clone())?)
+    }
+
+    pub async fn get_members(&self, client: ApiClient) -> Result<Vec<ClanMember>> {
+        let mut list = vec![];
+
+        let url = format!("{}/GroupV2/{groupId}/Members/", URL_BASE, groupId = self.detail.id);
+        let resp = client.get(url).await?;
+        let val = serde_json::from_str::<Value>(resp.as_str())?;
+        list = serde_json::from_value::<Vec<ClanMember>>(val["Response"]["results"].clone())?;
+
+        Ok(list)
+    }
+}
+
+#[derive(Deserialize, Serialize, Clone)]
 pub struct ClanDetail {
     #[serde(rename = "groupId")]
     pub id: String,
@@ -58,40 +89,10 @@ pub struct ClanDetail {
     #[serde(with = "date_deserializer")]
     pub banExpireDate: Option<NaiveDateTime>,
     pub features: ClanFeatures,
+    pub clanInfo: ClanInfo,
 }
 
-impl Clan {
-    pub async fn get_by_id(apiClient: ApiClient, id: i32) -> Result<Self> {
-        let clan = apiClient.get(format!("{base}/GroupV2/{groupId}/", base = DestinyAPI::URL_BASE, groupId = id)).await?;
-
-        Ok(Clan::from_string_response(clan)?)
-    }
-
-    pub async fn get_by_name(apiClient: ApiClient, name: &str) -> Result<Self> {
-        let clan = apiClient.get(format!("{base}/GroupV2/Name/{groupName}/{groupType}/", base = DestinyAPI::URL_BASE, groupName = name, groupType = 1)).await?;
-
-        Ok(Clan::from_string_response(clan)?)
-    }
-
-    fn from_string_response(response: String) -> Result<Self> {
-        let val: Value = serde_json::from_str(response.as_str())?;
-
-        Ok(serde_json::from_value::<Clan>(val["Response"].clone())?)
-    }
-
-    pub async fn get_members(&self, client: ApiClient) -> Result<Vec<ClanMember>> {
-        let mut list = vec![];
-
-        let url = format!("{}/GroupV2/{groupId}/Members/", URL_BASE, groupId = self.detail.id);
-        let resp = client.get(url).await?;
-        let val = serde_json::from_str::<Value>(resp.as_str())?;
-        list = serde_json::from_value::<Vec<ClanMember>>(val["Response"]["results"].clone())?;
-
-        Ok(list)
-    }
-}
-
-#[derive(Deserialize, Serialize)]
+#[derive(Deserialize, Serialize, Clone)]
 pub struct ClanFeatures {
     pub maximumMembers: i32,
     pub maximumMembershipsOfGroupType: i32,
@@ -104,7 +105,12 @@ pub struct ClanFeatures {
     pub joinLevel: i32,
 }
 
-#[derive(Deserialize, Serialize)]
+#[derive(Deserialize, Serialize, Clone)]
+pub struct ClanInfo {
+    pub clanCallsign: String,
+}
+
+#[derive(Deserialize, Serialize, Clone)]
 pub struct ClanMember {
     pub memberType: i16,
     pub isOnline: bool,
@@ -117,7 +123,7 @@ pub struct ClanMember {
     pub joinDate: Option<NaiveDateTime>,
 }
 
-#[derive(Deserialize, Serialize)]
+#[derive(Deserialize, Serialize, Clone)]
 pub struct DestinyUserInfo {
     pub LastSeenDisplayName: String,
     pub LastSeenDisplayNameType: i16,

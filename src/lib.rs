@@ -191,7 +191,38 @@ pub async fn test_pgcr_one() {
     print_pgcr(&pgcr);
 }
 
+#[tokio::test]
+pub async fn test_pgcr_trials() {
+    let pgcr = PgcrScraper::new(&get_api().await.client).await.get_pgcr(9496960718).await.unwrap();
+    print_pgcr(&pgcr);
+}
+
+#[tokio::test]
+pub async fn test_pgcr_votd() {
+    let pgcr = PgcrScraper::new(&get_api().await.client).await.get_pgcr(10405562745).await.unwrap();
+    print_pgcr(&pgcr);
+}
+
 fn print_pgcr(pgcr: &PGCR) {
+    println!("ID - {}", pgcr.activityDetails.instanceId);
+    println!("Date - {}", pgcr.period.unwrap());
+    println!("Starting Phase Index - {}", pgcr.startingPhaseIndex);
+    println!("Was Started From The Beginning - {}", pgcr.activityWasStartedFromBeginning);
+
+
+    for entry in pgcr.entries.clone() {
+        println!("\n------Entry-----");
+        println!("Username - {}#{}", entry.player.destinyUserInfo.global_display_name, entry.player.destinyUserInfo.discriminator);
+        println!("Character ID - {}", entry.characterId);
+        println!("Standing - {}", entry.standing);
+        println!("---Values---");
+        println!("Player Count - {}", entry.values.playerCount.basic.value);
+        println!("Completed - {}", entry.values.completed.basic.displayValue);
+        println!("Completion Reason - {}", entry.values.completionReason.basic.displayValue);
+        println!("Start Seconds - {}", entry.values.startSeconds.basic.value);
+        println!("Activity Duration - {}", entry.values.activityDurationSeconds.basic.displayValue);
+    }
+
     println!("Assists Display Value - {}", pgcr.entries.get(0).unwrap().values.completed.basic.displayValue);
 }
 
@@ -199,9 +230,10 @@ fn print_pgcr(pgcr: &PGCR) {
 pub async fn manifest_test() {
     let man = Manifest::new(get_api().await.client);
 
-    let vec = vec!["144602215", "1735777505", "1935470627", "1943323491", "2996146975", "392767087", "4244567218"];
+    let vec = vec!["584850370", "1273404180", "3381682691", "3759191272"];
 
     for s in vec {
-        println!("{} = {}", s, man.manifest_get(ManifestEntityType::ITEMSTAT, String::from(s)).await.unwrap());
+        println!("{} = {}", s, man.manifest_get(ManifestEntityType::PROGRESSION, String::from(s)).await.unwrap());
     }
+
 }
