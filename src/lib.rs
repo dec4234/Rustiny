@@ -177,10 +177,25 @@ fn print_clan(clan: Clan) {
 }
 
 #[tokio::test]
+#[ignore]
+async fn clan_weekly_rewards() {
+    let clan = Clan::get_by_id(get_api().await.client, 3074427).await.unwrap();
+
+    let man = Manifest::new(get_api().await.client);
+
+    let rewards = clan.get_weekly_rewards(&get_api().await.client).await.unwrap();
+    let list = rewards.rewards.get(0).unwrap();
+
+    for e in list.entries.clone() {
+        println!("{}", man.manifest_reward(rewards.milestoneHash, e.rewardEntryHash).await.unwrap().displayProperties.name);
+    }
+}
+
+#[tokio::test]
 async fn clan_members() {
     let clan = Clan::get_by_id(get_api().await.client, 3074427).await.unwrap();
 
-    for m in clan.get_members(get_api().await.client).await.unwrap() {
+    for m in clan.get_members(&get_api().await.client).await.unwrap() {
         println!("{} - {}", m.destinyUserInfo.displayName, m.isOnline);
     }
 }
@@ -222,8 +237,6 @@ fn print_pgcr(pgcr: &PGCR) {
         println!("Start Seconds - {}", entry.values.startSeconds.basic.value);
         println!("Activity Duration - {}", entry.values.activityDurationSeconds.basic.displayValue);
     }
-
-    println!("Assists Display Value - {}", pgcr.entries.get(0).unwrap().values.completed.basic.displayValue);
 }
 
 #[tokio::test]

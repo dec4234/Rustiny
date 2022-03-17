@@ -40,7 +40,7 @@ impl Clan {
         Ok(serde_json::from_value::<Clan>(val["Response"].clone())?)
     }
 
-    pub async fn get_members(&self, client: ApiClient) -> Result<Vec<ClanMember>> {
+    pub async fn get_members(&self, client: &ApiClient) -> Result<Vec<ClanMember>> {
         let mut list = vec![];
 
         let url = format!("{}/GroupV2/{groupId}/Members/", URL_BASE, groupId = self.detail.id);
@@ -50,6 +50,31 @@ impl Clan {
 
         Ok(list)
     }
+
+    pub async fn get_weekly_rewards(&self, client: &ApiClient) -> Result<WeeklyRewardResponse> {
+        let resp = client.get_parse::<WeeklyRewardResponse>(format!("{}/Destiny2/Clan/{groupId}/WeeklyRewardState/", URL_BASE, groupId = self.detail.id), true).await?;
+
+        Ok(resp)
+    }
+}
+
+#[derive(Deserialize, Serialize, Clone)]
+pub struct WeeklyRewardResponse {
+    pub milestoneHash: i64,
+    pub rewards: Vec<Rewards>,
+}
+
+#[derive(Deserialize, Serialize, Clone)]
+pub struct Rewards {
+    pub rewardCategoryHash: i64,
+    pub entries: Vec<WeeklyReward>,
+}
+
+#[derive(Deserialize, Serialize, Clone)]
+pub struct WeeklyReward {
+    pub rewardEntryHash: i64,
+    pub earned: bool,
+    pub redeemed: bool,
 }
 
 #[derive(Deserialize, Serialize, Clone)]

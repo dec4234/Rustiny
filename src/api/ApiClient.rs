@@ -68,7 +68,13 @@ impl ApiClient {
         Ok(text)
     }
 
-    pub async fn get_parse<T: DeserializeOwned>(&self, url: String,) -> Result<T> {
+    pub async fn get_parse<T: DeserializeOwned>(&self, url: String, dewrap: bool) -> Result<T> {
+        if dewrap {
+            let val = serde_json::from_str::<Value>(self.get(url.clone()).await?.as_str())?;
+
+            return Ok(serde_json::from_value::<T>(val["Response"].clone())?)
+        }
+
         let text = self.get(url.clone()).await?;
 
         let r = serde_json::from_str::<T>(text.as_str())?;
@@ -76,7 +82,13 @@ impl ApiClient {
         Ok(r)
     }
 
-    pub async fn get_parse_params<T: DeserializeOwned>(&self, url: String, map: HashMap<&str, &str>) -> Result<T> {
+    pub async fn get_parse_params<T: DeserializeOwned>(&self, url: String, dewrap: bool, map: HashMap<&str, &str>) -> Result<T> {
+        if dewrap {
+            let val = serde_json::from_str::<Value>(self.get_params(url.clone(), map).await?.as_str())?;
+
+            return Ok(serde_json::from_value::<T>(val["Response"].clone())?)
+        }
+
         let text = self.get_params(url, map).await?;
 
         Ok(serde_json::from_str::<T>(text.as_str())?)
@@ -107,7 +119,13 @@ impl ApiClient {
         Ok(text)
     }
 
-    pub async fn post_parse<T: DeserializeOwned>(&self, url: String, body: String,) -> Result<T> {
+    pub async fn post_parse<T: DeserializeOwned>(&self, url: String, body: String, dewrap: bool) -> Result<T> {
+        if dewrap {
+            let val = serde_json::from_str::<Value>(self.post(url, body).await?.as_str())?;
+
+            return Ok(serde_json::from_value::<T>(val["Response"].clone())?)
+        }
+
         let text = self.post(url, body).await?;
 
         let r = serde_json::from_str::<T>(text.as_str())?;
@@ -115,7 +133,13 @@ impl ApiClient {
         Ok(r)
     }
 
-    pub async fn post_parse_params<T: DeserializeOwned>(&self, url: String, body: String, map: HashMap<&str, &str>) -> Result<T> {
+    pub async fn post_parse_params<T: DeserializeOwned>(&self, url: String, body: String, map: HashMap<&str, &str>, dewrap: bool) -> Result<T> {
+        if dewrap {
+            let val = serde_json::from_str::<Value>(self.post_params(url, body, map).await?.as_str())?;
+
+            return Ok(serde_json::from_value::<T>(val["Response"].clone())?)
+        }
+
         let text = self.post_params(url, body, map).await?;
 
         Ok(serde_json::from_str::<T>(text.as_str())?)

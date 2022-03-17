@@ -91,8 +91,7 @@ impl BungieUser {
             "displayNameCode": split[1],
         });
 
-        let val = client.post_parse::<Value>(url, body.to_string()).await?;
-        let list = serde_json::from_value::<Vec<PartialProfileResponse>>(val["Response"].clone())?;
+        let list = client.post_parse::<Vec<PartialProfileResponse>>(url, body.to_string(), true).await?;
 
         if let Some(profile) = list.into_iter().next() {
             return BungieUser::get_user_by_id(client, profile.membershipId, DestinyPlatform::from_code(profile.membershipType).expect("Platform Code could not be deserialized")).await;

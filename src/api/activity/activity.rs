@@ -23,12 +23,12 @@ impl PgcrScraper {
     }
 
     pub async fn get_pgcr(&self, id: i64) -> Result<PGCR> {
-        Ok(PGCR::new(self.get_pgcr_raw(id).await?["Response"].clone())?)
+        Ok(PGCR::new(self.get_pgcr_raw(id).await?)?)
     }
 
     pub async fn get_pgcr_raw(&self, id: i64) -> Result<Value> {
         let url = format!("https://stats.bungie.net/Platform/Destiny2/Stats/PostGameCarnageReport/{activityId}/", activityId = id);
-        let resp = self.client.get_parse::<Value>(url).await?;
+        let resp = self.client.get_parse::<Value>(url, true).await?;
 
         Ok(resp)
     }
