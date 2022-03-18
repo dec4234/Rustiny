@@ -88,8 +88,12 @@ fn print_user(user: &BungieUser) {
     println!("Name Discriminator - {}", user.primary.discriminator);
 
     println!("Is Public - {}", user.primary.is_public);
-    println!("Is Overridden - {}", user.primary.is_overridden);
-    println!("Is Cross Save Primary - {}", user.primary.is_cross_save_primary);
+    if let Some(overriden) = user.primary.is_overridden {
+        println!("Is Overridden - {}", overriden);
+    }
+    if let Some(primary) = user.primary.is_cross_save_primary {
+        println!("Is Cross Save Primary - {}", primary);
+    }
 
 
     print!("Applicable Membership Types - [");

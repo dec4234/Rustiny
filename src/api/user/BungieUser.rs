@@ -34,7 +34,7 @@ impl BungieUser {
     pub async fn get_user_by_id(client: &ApiClient, id: String, platform: DestinyPlatform) -> Result<BungieUser> {
         let url = format!("{}/Destiny2/{membershipType}/Profile/{membershipId}/LinkedProfiles/", DestinyAPI::URL_BASE, membershipId = id, membershipType = platform.get_code());
         let val = serde_json::from_str::<Value>(client.get(url).await?.as_str())?;
-        BungieUser::new(val.clone())
+        BungieUser::new(val)
     }
 
     pub async fn get_users_with_name(client: &ApiClient, name: String) -> Result<Vec<DestinyProfile>> {
@@ -168,12 +168,12 @@ pub struct DestinyProfile {
 
     #[serde(rename = "isPublic")]
     pub is_public: bool,
-    #[serde(default)]
+
     #[serde(rename = "isOverridden")]
-    pub is_overridden: bool,
-    #[serde(default)]
+    pub is_overridden: Option<bool>,
+
     #[serde(rename = "isCrossSavePrimary")]
-    pub is_cross_save_primary: bool,
+    pub is_cross_save_primary: Option<bool>,
 
     #[serde(rename = "applicableMembershipTypes")]
     pub membership_types: Vec<i8>,
@@ -203,8 +203,8 @@ impl Default for DestinyProfile {
             global_display_name: "".to_string(),
             discriminator: 0,
             is_public: false,
-            is_overridden: false,
-            is_cross_save_primary: false,
+            is_overridden: None,
+            is_cross_save_primary: None,
             membership_types: vec![],
             dateLastPlayed: None,
         }

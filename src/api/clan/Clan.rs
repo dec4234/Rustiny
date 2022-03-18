@@ -59,25 +59,6 @@ impl Clan {
 }
 
 #[derive(Deserialize, Serialize, Clone)]
-pub struct WeeklyRewardResponse {
-    pub milestoneHash: i64,
-    pub rewards: Vec<Rewards>,
-}
-
-#[derive(Deserialize, Serialize, Clone)]
-pub struct Rewards {
-    pub rewardCategoryHash: i64,
-    pub entries: Vec<WeeklyReward>,
-}
-
-#[derive(Deserialize, Serialize, Clone)]
-pub struct WeeklyReward {
-    pub rewardEntryHash: i64,
-    pub earned: bool,
-    pub redeemed: bool,
-}
-
-#[derive(Deserialize, Serialize, Clone)]
 pub struct ClanDetail {
     #[serde(rename = "groupId")]
     pub id: String,
@@ -161,6 +142,25 @@ pub struct DestinyUserInfo {
     pub displayName: String,
     pub bungieGlobalDisplayName: String,
     pub bungieGlobalDisplayNameCode: Option<i32>,
+}
+
+#[derive(Deserialize, Serialize, Clone)]
+pub struct WeeklyRewardResponse {
+    pub milestoneHash: i64,
+    pub rewards: Vec<Rewards>,
+}
+
+#[derive(Deserialize, Serialize, Clone)]
+pub struct Rewards {
+    pub rewardCategoryHash: i64,
+    pub entries: Vec<WeeklyReward>,
+}
+
+#[derive(Deserialize, Serialize, Clone)]
+pub struct WeeklyReward {
+    pub rewardEntryHash: i64,
+    pub earned: bool,
+    pub redeemed: bool,
 }
 
 /*
