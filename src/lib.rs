@@ -200,8 +200,16 @@ async fn clan_members() {
     let clan = Clan::get_by_id(get_api().await.client, 3074427).await.unwrap();
 
     for m in clan.get_members(&get_api().await.client).await.unwrap() {
-        println!("{} - {}", m.destinyUserInfo.displayName, m.isOnline);
+        println!("{} - {}", m.destinyUserInfo.LastSeenDisplayName.unwrap(), m.isOnline.unwrap());
     }
+}
+
+#[tokio::test]
+async fn get_founder() {
+    let clan = Clan::get_by_id(get_api().await.client, 3074427).await.unwrap();
+    let founder = clan.founder;
+
+    println!("{} - {}", founder.destinyUserInfo.global_display_name, founder.joinDate.unwrap());
 }
 
 #[tokio::test]

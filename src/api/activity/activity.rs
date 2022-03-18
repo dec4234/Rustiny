@@ -4,7 +4,6 @@ use serde::{Deserialize, Serialize};
 use anyhow::Result;
 use chrono::NaiveDateTime;
 use serde_json::Value;
-use crate::api::clan::Clan::DestinyUserInfo;
 use crate::api::user::BungieUser::DestinyProfile;
 use crate::api::Util::date_deserializer;
 use crate::api::Util::macros;

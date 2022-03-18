@@ -8,7 +8,7 @@ use crate::api::ApiClient::ApiClient;
 use crate::api::Util::date_deserializer;
 use serde_json::Value;
 use crate::api::DestinyAPI::URL_BASE;
-use crate::api::user::BungieUser::BnetMembership;
+use crate::api::user::BungieUser::{BnetMembership, DestinyProfile};
 use crate::BungieUser;
 
 #[derive(Deserialize, Serialize, Clone)]
@@ -19,6 +19,7 @@ pub struct Clan {
     pub allianceStatus: i32,
     pub groupJoinInviteCount: i32,
     pub currentUserMembershipsInactiveForDestiny: bool,
+    pub founder: ClanMember,
 }
 
 impl Clan {
@@ -119,29 +120,14 @@ pub struct ClanInfo {
 #[derive(Deserialize, Serialize, Clone)]
 pub struct ClanMember {
     pub memberType: i16,
-    pub isOnline: bool,
+    pub isOnline: Option<bool>,
     /// The epoch date indicating when the user last went online/offline (need to implement custom deserializer)
     pub lastOnlineStatusChange: String,
     pub groupId: String,
-    pub destinyUserInfo: DestinyUserInfo,
+    pub destinyUserInfo: DestinyProfile,
     pub bungieNetUserInfo: BnetMembership,
     #[serde(with = "date_deserializer")]
     pub joinDate: Option<NaiveDateTime>,
-}
-
-#[derive(Deserialize, Serialize, Clone)]
-pub struct DestinyUserInfo {
-    pub LastSeenDisplayName: String,
-    pub LastSeenDisplayNameType: i16,
-    pub iconPath: String,
-    pub crossSaveOverride: i16,
-    pub applicableMembershipTypes: Vec<i16>,
-    pub isPublic: bool,
-    pub membershipType: i16,
-    pub membershipId: String,
-    pub displayName: String,
-    pub bungieGlobalDisplayName: String,
-    pub bungieGlobalDisplayNameCode: Option<i32>,
 }
 
 #[derive(Deserialize, Serialize, Clone)]

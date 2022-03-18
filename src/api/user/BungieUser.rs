@@ -181,6 +181,10 @@ pub struct DestinyProfile {
     #[serde(default = "date_deserializer::default")]
     #[serde(with = "date_deserializer")]
     pub dateLastPlayed: Option<NaiveDateTime>,
+
+    // Only present in Clan Member reponses and Founder profile
+    pub LastSeenDisplayName: Option<String>,
+    pub LastSeenDisplayNameType: Option<i16>,
 }
 
 impl DestinyProfile {
@@ -207,6 +211,8 @@ impl Default for DestinyProfile {
             is_cross_save_primary: None,
             membership_types: vec![],
             dateLastPlayed: None,
+            LastSeenDisplayName: None,
+            LastSeenDisplayNameType: None
         }
     }
 }
