@@ -1,11 +1,60 @@
-use crate::api::activity::activity::{PGCR, PgcrScraper};
+use std::borrow::Borrow;
+use crate::api::activity::activity::{ActivityMode, PGCR, PgcrScraper};
 use crate::api::DestinyAPI::ApiInterface;
 use crate::api::user::BungieUser::{BungieUser, DestinyPlatform};
 use crate::api::clan::Clan::Clan;
 use crate::api::manifest::manifest::{Manifest, ManifestEntityType};
 use crate::api::user::DestinyCharacter::DestinyCharacter;
+use anyhow::Result;
 
 pub mod api;
+
+struct Tester {
+    interface: ApiInterface,
+    user: Option<BungieUser>,
+    character: Option<DestinyCharacter>,
+    clan: Option<Clan>,
+}
+
+impl Tester {
+    async fn new() -> Self {
+        let mut test = Self {
+            interface: ApiInterface::new("c57f52d5d071428fb8ff8684ba938212", true).await,
+            user: None,
+            character: None,
+            clan: None,
+        };
+
+        test.user = Some(test.interface.get_user_by_id("4611686018468620320".to_string(), DestinyPlatform::Steam).await.unwrap());
+        // test.character = Some(test.user.clone().unwrap().get_characters(&test.interface.client).await.unwrap().get(0).unwrap().clone());
+
+        test
+    }
+
+    fn get_user(&self) -> BungieUser {
+        self.user.clone().unwrap()
+    }
+
+    fn get_character(&self) -> DestinyCharacter {
+        self.character.clone().unwrap()
+    }
+
+    async fn test_all(&self, scraper: &PgcrScraper) {
+        self.activity_history(scraper).await;
+    }
+
+    async fn activity_history(&self, scraper: &PgcrScraper) {
+        scraper.get_activity_history(self.get_user(), ActivityMode::CrimsonDoubles).await;
+    }
+}
+
+#[tokio::test]
+async fn test_tester_items() {
+    let test = Tester::new().await;
+    let scraper = PgcrScraper::new(&test.interface.client.clone().await).await;
+
+    test.test_all(&scraper).await;
+}
 
 async fn get_api() -> ApiInterface {
     ApiInterface::new("c57f52d5d071428fb8ff8684ba938212", true).await
@@ -252,6 +301,7 @@ fn print_pgcr(pgcr: &PGCR) {
 }
 
 #[tokio::test]
+#[ignore]
 pub async fn manifest_test() {
     let man = Manifest::new(get_api().await.client);
 

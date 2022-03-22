@@ -3,9 +3,13 @@ use serde::{Deserialize, Serialize};
 use serde_json::Value;
 use crate::api::Util::date_deserializer;
 use anyhow::Result;
+use crate::BungieUser;
 
 #[derive(Deserialize, Serialize, Clone)]
 pub struct DestinyCharacter {
+    #[serde(skip)]
+    pub user: Option<BungieUser>,
+
     pub baseCharacterLevel: i16,
     pub characterId: String,
     pub classHash: i64,
@@ -35,6 +39,13 @@ pub struct DestinyCharacter {
 impl DestinyCharacter {
     pub fn new(value: Value) -> Result<Self> {
         Ok(serde_json::from_value::<DestinyCharacter>(value)?)
+    }
+
+    pub fn new_with_user(value: Value, user: BungieUser) -> Result<Self> {
+        let mut char = serde_json::from_value::<DestinyCharacter>(value)?;
+        char.user = Some(user);
+
+        Ok(char)
     }
 }
 
