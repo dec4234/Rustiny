@@ -164,7 +164,7 @@ pub struct DestinyProfile {
     #[serde(rename = "bungieGlobalDisplayName")]
     pub global_display_name: String,
     #[serde(rename = "bungieGlobalDisplayNameCode")]
-    pub discriminator: i32,
+    pub discriminator: Option<i32>,
 
     #[serde(rename = "isPublic")]
     pub is_public: bool,
