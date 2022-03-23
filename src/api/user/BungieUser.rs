@@ -157,6 +157,7 @@ pub struct DestinyProfile {
     #[serde(rename = "membershipType")]
     pub platform: i16,
 
+    #[serde(default)]
     #[serde(rename = "displayName")]
     pub platform_display_name: String,
     #[serde(rename = "crossSaveOverride")]
