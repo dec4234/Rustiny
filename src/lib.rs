@@ -134,7 +134,7 @@ fn print_user(user: &BungieUser) {
     println!("Cross Save Override - {}", user.primary.cross_save_override);
 
     println!("Global Display Name - {}", user.primary.global_display_name);
-    println!("Name Discriminator - {}", user.primary.discriminator);
+    println!("Name Discriminator - {}", user.primary.discriminator.unwrap());
 
     println!("Is Public - {}", user.primary.is_public);
     if let Some(overriden) = user.primary.is_overridden {
@@ -288,7 +288,7 @@ fn print_pgcr(pgcr: &PGCR) {
 
     for entry in pgcr.entries.clone() {
         println!("\n------Entry-----");
-        println!("Username - {}#{}", entry.player.destinyUserInfo.global_display_name, entry.player.destinyUserInfo.discriminator);
+        println!("Username - {}#{}", entry.player.destinyUserInfo.global_display_name, entry.player.destinyUserInfo.discriminator.unwrap());
         println!("Character ID - {}", entry.characterId);
         println!("Standing - {}", entry.standing);
         println!("---Values---");

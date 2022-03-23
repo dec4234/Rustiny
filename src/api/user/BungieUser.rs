@@ -205,7 +205,7 @@ impl Default for DestinyProfile {
             platform_display_name: "".to_string(),
             cross_save_override: 0,
             global_display_name: "".to_string(),
-            discriminator: 0,
+            discriminator: Some(0),
             is_public: false,
             is_overridden: None,
             is_cross_save_primary: None,
