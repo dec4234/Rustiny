@@ -49,18 +49,18 @@ impl PgcrScraper {
         let mut vec = vec![];
 
         for chara in user.get_characters(&self.client).await? {
-            for i in 0..1000 {
+            'inner: for i in 0..1000 {
                 let url = format!("{}/Destiny2/{membershipType}/Account/{destinyMembershipId}/Character/{characterId}/Stats/Activities/{query}&page={page}", URL_BASE, membershipType = &user.primary.platform, destinyMembershipId = &user.primary.id, characterId = &chara.characterId, query = &query, page = i);
 
-                let response = self.client.get_parse::<Value>(url, false).await?;
-                let inner = serde_json::from_value::<Vec<ActivityHistoryResponse>>(response);
+                let response = self.client.get_parse::<Value>(url, true).await?;
+                let inner = serde_json::from_value::<Vec<ActivityHistoryResponse>>(response["activities"].clone());
 
                 if let Ok(inner) = inner { // If there are no more valid pages this will catch it
                     for ahr in inner {
                         vec.push(ahr);
                     }
                 } else {
-                    break;
+                    break 'inner;
                 }
             }
         }

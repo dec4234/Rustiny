@@ -19,7 +19,7 @@ struct Tester {
 impl Tester {
     async fn new() -> Self {
         let mut test = Self {
-            interface: ApiInterface::new("c57f52d5d071428fb8ff8684ba938212", true).await,
+            interface: ApiInterface::new("c57f52d5d071428fb8ff8684ba938212", false).await,
             user: None,
             character: None,
             clan: None,
@@ -44,7 +44,7 @@ impl Tester {
     }
 
     async fn activity_history(&self, scraper: &PgcrScraper) {
-        scraper.get_activity_history(self.get_user(), ActivityMode::CrimsonDoubles).await;
+        println!("Acitivty History Reports - {}", scraper.get_activity_history(self.get_user(), ActivityMode::Raid).await.unwrap().len());
     }
 }
 
