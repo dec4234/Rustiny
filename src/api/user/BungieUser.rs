@@ -161,9 +161,10 @@ pub struct DestinyProfile {
     pub platform_display_name: String,
     #[serde(rename = "crossSaveOverride")]
     pub cross_save_override: i16,
+
+    #[serde(default)]
     #[serde(rename = "bungieGlobalDisplayName")]
     pub global_display_name: String,
-
     #[serde(default)]
     #[serde(rename = "bungieGlobalDisplayNameCode")]
     pub discriminator: i32,
