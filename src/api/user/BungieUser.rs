@@ -163,8 +163,10 @@ pub struct DestinyProfile {
     pub cross_save_override: i16,
     #[serde(rename = "bungieGlobalDisplayName")]
     pub global_display_name: String,
+
+    #[serde(default)]
     #[serde(rename = "bungieGlobalDisplayNameCode")]
-    pub discriminator: Option<i32>,
+    pub discriminator: i32,
 
     #[serde(rename = "isPublic")]
     pub is_public: bool,
@@ -205,7 +207,7 @@ impl Default for DestinyProfile {
             platform_display_name: "".to_string(),
             cross_save_override: 0,
             global_display_name: "".to_string(),
-            discriminator: Some(0),
+            discriminator: 0,
             is_public: false,
             is_overridden: None,
             is_cross_save_primary: None,
