@@ -130,6 +130,7 @@ pub struct Entry {
 #[derive(Deserialize, Serialize, Clone)]
 pub struct Player {
     pub destinyUserInfo: DestinyProfile,
+    #[serde(default)]
     pub characterClass: String,
     pub classHash: i64,
     pub raceHash: i64,
