@@ -178,6 +178,7 @@ pub struct DestinyProfile {
     #[serde(rename = "isCrossSavePrimary")]
     pub is_cross_save_primary: Option<bool>,
 
+    #[serde(default)]
     #[serde(rename = "applicableMembershipTypes")]
     pub membership_types: Vec<i8>,
 
