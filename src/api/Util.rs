@@ -99,5 +99,52 @@ pub mod macros {
         pub value: f32,
         pub displayValue: String,
     }
+
+    #[macro_export]
+    macro_rules! as_item {
+        ($i:item) => {
+            $i
+        };
+    }
+
+    #[macro_export]
+    macro_rules! enumize {
+        ($name: ident, $y: ty => {
+                $($na: ident, $lit: literal),*
+            }
+        )  => {
+            as_item!{
+                #[derive(PartialEq)]
+                pub enum $name {
+                    $($na),*,
+                }
+            }
+
+            impl $name {
+                pub fn get_all() -> Vec<$name> {
+                    vec![$($name::$na),*,]
+                }
+
+                pub fn get_code(&self) -> $y {
+                    match self {
+                        $($name::$na => $lit),*
+                    }
+                }
+            }
+        };
+    }
+
+    #[test]
+    #[ignore]
+    fn enumize_test() {
+        enumize!(TestEnum, i32 => {
+            f, 3,
+            y, 6
+        } );
+
+        for t in TestEnum::get_all() {
+            println!("{}", t.get_code());
+        }
+    }
 }
 
