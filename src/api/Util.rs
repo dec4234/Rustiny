@@ -110,7 +110,7 @@ pub mod macros {
     #[macro_export]
     macro_rules! enumize {
         ($name: ident, $y: ty => {
-                $($na: ident, $lit: literal),*
+                $($na: ident, $lit: expr),*
             }
         )  => {
             $crate::as_item!{
@@ -125,9 +125,9 @@ pub mod macros {
                     vec![$($name::$na),*,]
                 }
 
-                pub fn from_code(code: $y) -> Option<$name> where $y: PartialEq {
+                pub fn from(code: $y) -> Option<$name> where $y: PartialEq {
                     for n in $name::get_all() {
-                        if n.get_code() == code {
+                        if n.get() == code {
                             return Some(n);
                         }
                     }
@@ -135,7 +135,7 @@ pub mod macros {
                     None
                 }
 
-                pub fn get_code(&self) -> $y {
+                pub fn get(&self) -> $y {
                     match self {
                         $($name::$na => $lit),*
                     }
@@ -153,7 +153,20 @@ pub mod macros {
         } );
 
         for t in TestEnum::get_all() {
-            println!("{}", t.get_code());
+            println!("{}", t.get());
+        }
+    }
+
+    #[test]
+    #[ignore]
+    fn enumize_test_string() {
+        enumize!(StringEnum, String => {
+            t, "t type".to_string(),
+            B, "B type".to_string()
+        });
+
+        for t in StringEnum::get_all() {
+            println!("{}", t.get());
         }
     }
 }

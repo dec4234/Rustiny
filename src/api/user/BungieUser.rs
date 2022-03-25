@@ -33,7 +33,7 @@ impl BungieUser {
     }
 
     pub async fn get_user_by_id(client: &ApiClient, id: String, platform: DestinyPlatform) -> Result<BungieUser> {
-        let url = format!("{}/Destiny2/{membershipType}/Profile/{membershipId}/LinkedProfiles/", DestinyAPI::URL_BASE, membershipId = id, membershipType = platform.get_code());
+        let url = format!("{}/Destiny2/{membershipType}/Profile/{membershipId}/LinkedProfiles/", DestinyAPI::URL_BASE, membershipId = id, membershipType = platform.get());
         let val = serde_json::from_str::<Value>(client.get(url).await?.as_str())?;
         BungieUser::new(val)
     }
@@ -80,7 +80,7 @@ impl BungieUser {
     }
 
     pub async fn get_user_by_name_and_discrim_with_platform(client: &ApiClient, name_and_discrim: String, platform: DestinyPlatform) -> Result<BungieUser> {
-        let url = format!("{}/Destiny2/SearchDestinyPlayerByBungieName/{membershipType}/", DestinyAPI::URL_BASE, membershipType = platform.get_code());
+        let url = format!("{}/Destiny2/SearchDestinyPlayerByBungieName/{membershipType}/", DestinyAPI::URL_BASE, membershipType = platform.get());
         let split: Vec<&str> = name_and_discrim.split("#").collect();
 
         if split.len() != 2 {
@@ -95,7 +95,7 @@ impl BungieUser {
         let list = client.post_parse::<Vec<PartialProfileResponse>>(url, body.to_string(), true).await?;
 
         if let Some(profile) = list.into_iter().next() {
-            return BungieUser::get_user_by_id(client, profile.membershipId, DestinyPlatform::from_code(profile.membershipType).expect("Platform Code could not be deserialized")).await;
+            return BungieUser::get_user_by_id(client, profile.membershipId, DestinyPlatform::from(profile.membershipType).expect("Platform Code could not be deserialized")).await;
         }
 
         Err(anyhow!("Returned List was Empty, check your search query"))
@@ -195,11 +195,11 @@ pub struct DestinyProfile {
 
 impl DestinyProfile {
     pub fn get_platform(&self) -> Option<DestinyPlatform> {
-        DestinyPlatform::from_code(self.platform)
+        DestinyPlatform::from(self.platform)
     }
 
     pub async fn get_bungie_user(&self, client: &ApiClient) -> Result<BungieUser> {
-        BungieUser::get_user_by_id(client, self.id.clone(), DestinyPlatform::from_code(self.platform).unwrap()).await
+        BungieUser::get_user_by_id(client, self.id.clone(), DestinyPlatform::from(self.platform).unwrap()).await
     }
 }
 

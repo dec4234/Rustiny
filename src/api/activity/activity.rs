@@ -44,7 +44,7 @@ impl PgcrScraper {
     /// Get the activity history of this user of the specific activity
     pub async fn get_activity_history(&self, user: BungieUser, mode: ActivityMode) -> Result<Vec<ActivityHistoryResponse>> {
         let mut query = String::new();
-        query.push_str(format!("?count=250&mode={mode}", mode = mode.get_code()).as_str());
+        query.push_str(format!("?count=250&mode={mode}", mode = mode.get()).as_str());
 
         let mut vec = vec![];
 
