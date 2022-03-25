@@ -8,6 +8,7 @@ use crate::api::DestinyAPI;
 use crate::api::DestinyAPI::URL_BASE;
 use crate::api::Util::date_deserializer;
 use crate::api::user::DestinyCharacter::DestinyCharacter;
+use crate::enumize;
 
 #[derive(Deserialize, Debug, Clone)]
 pub struct BungieUser {
@@ -222,48 +223,17 @@ impl Default for DestinyProfile {
     }
 }
 
-pub enum DestinyPlatform {
-    None,
-    Xbox,
-    PSN,
-    Steam,
-    Blizzard,
-    Stadia,
-    Demon,
-    BungieNext,
-    All,
-}
-
-impl DestinyPlatform {
-    pub fn from_code(code: i16) -> Option<Self> {
-        match code {
-            0 => Some(DestinyPlatform::None),
-            1 => Some(DestinyPlatform::Xbox),
-            2 => Some(DestinyPlatform::PSN),
-            3 => Some(DestinyPlatform::Steam),
-            4 => Some(DestinyPlatform::Blizzard),
-            5 => Some(DestinyPlatform::Stadia),
-            10 => Some(DestinyPlatform::Demon),
-            254 => Some(DestinyPlatform::BungieNext),
-            -1 => Some(DestinyPlatform::All),
-            _ => None
-        }
-    }
-
-    pub fn get_code(&self) -> i16 {
-        match self {
-            DestinyPlatform::None => 0,
-            DestinyPlatform::Xbox => 1,
-            DestinyPlatform::PSN => 2,
-            DestinyPlatform::Steam => 3,
-            DestinyPlatform::Blizzard => 4,
-            DestinyPlatform::Stadia => 5,
-            DestinyPlatform::Demon => 10,
-            DestinyPlatform::BungieNext => 254,
-            DestinyPlatform::All => -1,
-        }
-    }
-}
+enumize!(DestinyPlatform, i16 => {
+    None, 0,
+    Xbox, 1,
+    PSN, 2,
+    Steam, 3,
+    Blizzard, 4,
+    Stadia, 5,
+    Demon, 10,
+    BungieNext, 254,
+    All, -1
+});
 
 #[derive(Deserialize, Serialize, Debug, Clone)]
 pub struct BnetMembership {

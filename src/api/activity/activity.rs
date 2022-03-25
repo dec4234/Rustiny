@@ -9,7 +9,7 @@ use crate::api::DestinyAPI::URL_BASE;
 use crate::api::user::BungieUser::DestinyProfile;
 use crate::api::Util::date_deserializer;
 use crate::api::Util::macros;
-use crate::{basic, BungieUser, DestinyCharacter};
+use crate::{basic, BungieUser, DestinyCharacter, enumize};
 use crate::api::Util::macros::Basic;
 
 pub struct PgcrScraper {
@@ -214,159 +214,72 @@ pub struct ExtendedValues {
 // VotD: 10405562745
 
 // https://bungie-net.github.io/multi/schema_Destiny-HistoricalStats-Definitions-DestinyActivityModeType.html#schema_Destiny-HistoricalStats-Definitions-DestinyActivityModeType
-#[derive(EnumIter)]
-pub enum ActivityMode {
-    None,
-    Story,
-    Strike,
-    Raid,
-    AllPvP,
-    Patrol,
-    AllPvE,
-    Control,
-    Clash,
-    CrimsonDoubles,
-    Nightfall,
-    HeroicNightfall,
-    AllStrikes,
-
-    IronBanner,
-    AllMayhem,
-    Supremacy,
-    PrivateMatchesAll,
-    Survival,
-    Countdown,
-    TrialsOfTheNine,
-    Social,
-    TrialsCountdown,
-    TrialsSurvival,
-    IronBannerControl,
-    IronBannerClash,
-    IronBannerSupremacy,
-    ScoredNightfall,
-    ScoredHeroicNightfall,
-    Rumble,
-    AllDoubles,
-    Doubles,
-    PrivateMatchesClash,
-    PrivateMatchesControl,
-    PrivateMatchesSupremacy,
-    PrivateMatchesCountdown,
-    PrivateMatchesSurvival,
-    PrivateMatchesMayhem,
-    PrivateMatchesRumble,
-    HeroicAdventure,
-    Showdown,
-    Lockdown,
-    Scorched,
-    ScorchedTeam,
-    Gambit,
-    AllPvECompetitve,
-
-    Breakthrough,
-    BlackArmoryRun,
-    Salvage,
-    IronBannerSalvage,
-    PvPCompetitve,
-    PvPQuickplay,
-    ClashQuickplay,
-    ClashCompetitve,
-    ControlQuickplay,
-    ControlCompetitve,
-    GambitPrime,
-    Reckoning,
-    Menagerie,
-    VexOffensive,
-    NightmareHunt,
-    Elimination,
-    Momentum,
-    Dungeon,
-    Sundial,
-    TrialsOfOsiris,
-    Dares,
-    Offensive,
-}
-
-impl ActivityMode {
-    pub fn get_code(&self) -> i16 {
-        match self {
-            ActivityMode::None => {0}
-            ActivityMode::Story => {2}
-            ActivityMode::Strike => {3}
-            ActivityMode::Raid => {4}
-            ActivityMode::AllPvP => {5}
-            ActivityMode::Patrol => {6}
-            ActivityMode::AllPvE => {7}
-            ActivityMode::Control => {10}
-            ActivityMode::Clash => {12}
-            ActivityMode::CrimsonDoubles => {15}
-            ActivityMode::Nightfall => {16}
-            ActivityMode::HeroicNightfall => {17}
-            ActivityMode::AllStrikes => {18}
-            ActivityMode::IronBanner => {19}
-            ActivityMode::AllMayhem => {25}
-            ActivityMode::Supremacy => {31}
-            ActivityMode::PrivateMatchesAll => {32}
-            ActivityMode::Survival => {37}
-            ActivityMode::Countdown => {38}
-            ActivityMode::TrialsOfTheNine => {39}
-            ActivityMode::Social => {40}
-            ActivityMode::TrialsCountdown => {41}
-            ActivityMode::TrialsSurvival => {42}
-            ActivityMode::IronBannerControl => {43}
-            ActivityMode::IronBannerClash => {44}
-            ActivityMode::IronBannerSupremacy => {45}
-            ActivityMode::ScoredNightfall => {46}
-            ActivityMode::ScoredHeroicNightfall => {47}
-            ActivityMode::Rumble => {48}
-            ActivityMode::AllDoubles => {49}
-            ActivityMode::Doubles => {50}
-            ActivityMode::PrivateMatchesClash => {51}
-            ActivityMode::PrivateMatchesControl => {52}
-            ActivityMode::PrivateMatchesSupremacy => {53}
-            ActivityMode::PrivateMatchesCountdown => {54}
-            ActivityMode::PrivateMatchesSurvival => {55}
-            ActivityMode::PrivateMatchesMayhem => {56}
-            ActivityMode::PrivateMatchesRumble => {57}
-            ActivityMode::HeroicAdventure => {58}
-            ActivityMode::Showdown => {59}
-            ActivityMode::Lockdown => {60}
-            ActivityMode::Scorched => {61}
-            ActivityMode::ScorchedTeam => {62}
-            ActivityMode::Gambit => {63}
-            ActivityMode::AllPvECompetitve => {64}
-            ActivityMode::Breakthrough => {65}
-            ActivityMode::BlackArmoryRun => {66}
-            ActivityMode::Salvage => {67}
-            ActivityMode::IronBannerSalvage => {68}
-            ActivityMode::PvPCompetitve => {69}
-            ActivityMode::PvPQuickplay => {70}
-            ActivityMode::ClashQuickplay => {71}
-            ActivityMode::ClashCompetitve => {72}
-            ActivityMode::ControlQuickplay => {73}
-            ActivityMode::ControlCompetitve => {74}
-            ActivityMode::GambitPrime => {75}
-            ActivityMode::Reckoning => {76}
-            ActivityMode::Menagerie => {77}
-            ActivityMode::VexOffensive => {78}
-            ActivityMode::NightmareHunt => {79}
-            ActivityMode::Elimination => {80}
-            ActivityMode::Momentum => {81}
-            ActivityMode::Dungeon => {82}
-            ActivityMode::Sundial => {83}
-            ActivityMode::TrialsOfOsiris => {84}
-            ActivityMode::Dares => {85}
-            ActivityMode::Offensive => {86}
-        }
-    }
-
-    pub fn from_code(code: i16) -> Option<ActivityMode> {
-        for mode in ActivityMode::iter() {
-            if mode.get_code() == code {
-                return Some(mode);
-            }
-        }
-
-        None
-    }
-}
+enumize!(ActivityMode, i16 => {
+    None, 0,
+    Story, 2,
+    Strike, 3,
+    Raid, 4,
+    AllPvP, 5,
+    Patrol, 6,
+    AllPvE, 7,
+    Control, 10,
+    Clash, 12,
+    CrimsonDoubles, 15,
+    Nightfall, 16,
+    HeroicNightfall, 17,
+    AllStrikes, 18,
+    IronBanner, 19,
+    AllMayhem, 25,
+    Supremacy, 31,
+    PrivateMatchesAll, 32,
+    Survival, 37,
+    Countdown, 38,
+    TrialsOfTheNine, 39,
+    Social, 40,
+    TrialsCountdown, 41,
+    TrialsSurvival, 42,
+    IronBannerControl, 43,
+    IronBannerClash, 44,
+    IronBannerSupremacy, 45,
+    ScoredNightfall, 46,
+    ScoredHeroicNightfall, 47,
+    Rumble, 48,
+    AllDoubles, 49,
+    Doubles, 50,
+    PrivateMatchesClash, 51,
+    APrivateMatchesControl, 52,
+    PrivateMatchesSupremacy, 53,
+    PrivateMatchesCountdown, 54,
+    PrivateMatchesSurvival, 55,
+    PrivateMatchesMayhem, 56,
+    PrivateMatchesRumble, 57,
+    HeroicAdventure, 58,
+    Showdown, 59,
+    Lockdown, 60,
+    Scorched, 61,
+    ScorchedTeam, 62,
+    Gambit, 63,
+    AllPvECompetitve, 64,
+    Breakthrough, 65,
+    BlackArmoryRun, 66,
+    Salvage, 67,
+    IronBannerSalvage, 68,
+    PvPCompetitve, 69,
+    PvPQuickplay, 70,
+    ClashQuickplay, 71,
+    ClashCompetitve, 72,
+    ControlQuickplay, 73,
+    ControlCompetitve, 74,
+    GambitPrime, 75,
+    Reckoning, 76,
+    Menagerie, 77,
+    VexOffensive, 78,
+    NightmareHunt, 79,
+    Elimination, 80,
+    Momentum, 81,
+    Dungeon, 82,
+    Sundial, 83,
+    TrialsOfOsiris, 84,
+    Dares, 85,
+    Offensive, 86
+});

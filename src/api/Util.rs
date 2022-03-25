@@ -113,7 +113,7 @@ pub mod macros {
                 $($na: ident, $lit: literal),*
             }
         )  => {
-            as_item!{
+            $crate::as_item!{
                 #[derive(PartialEq)]
                 pub enum $name {
                     $($na),*,
@@ -123,6 +123,16 @@ pub mod macros {
             impl $name {
                 pub fn get_all() -> Vec<$name> {
                     vec![$($name::$na),*,]
+                }
+
+                pub fn from_code(code: $y) -> Option<$name> where $y: PartialEq {
+                    for n in $name::get_all() {
+                        if n.get_code() == code {
+                            return Some(n);
+                        }
+                    }
+
+                    None
                 }
 
                 pub fn get_code(&self) -> $y {
