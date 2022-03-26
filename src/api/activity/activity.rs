@@ -299,7 +299,20 @@ enumize!(ActivityIdentifier, (ActivityMode, Vec<String>) => {
     InvertedSpire, (ActivityMode::Strike, vec!["3704910925".to_string(), "1563393783".to_string(), "286562305".to_string(), "1107473294".to_string(), "1743518003".to_string(), "338662534".to_string(), "2753180142".to_string(), "1743518000".to_string(), "467266668".to_string()]),
     ExodusCrash, (ActivityMode::Strike, vec!["2459768558".to_string(), "1549614516".to_string(), "4260306233".to_string(), "1930116823".to_string(), "2479262829".to_string(), "1930116820".to_string(), "2971335647".to_string()]),
     InsightTerminus, (ActivityMode::Strike, vec!["3751421841".to_string(), "291911094".to_string(), "3735153516".to_string(), "3735153519".to_string()]),
-    ProvingGround, (ActivityMode::Strike, vec!["546528643".to_string(), "1754609040".to_string()])
+    ProvingGround, (ActivityMode::Strike, vec!["546528643".to_string(), "1754609040".to_string()]),
+
+    ThePyramidion, (ActivityMode::Strike, vec!["1035135049".to_string(), "1603374112".to_string(), "1332567112".to_string(), "2704613535".to_string(), "1332567115".to_string(), "981383202".to_string(), "2799837309".to_string(), "4261351281".to_string()]),
+    FesteringCore, (ActivityMode::Strike, vec!["1035850837".to_string(), "3596828104".to_string()]),
+
+    TreeOfProbabilities, (ActivityMode::Strike, vec!["2678510381".to_string(), "1263901594".to_string(), "561345572".to_string(), "561345575".to_string(), "840678113".to_string(), "4085493024".to_string(), "2684121894".to_string()]),
+    AGardenWorld, (ActivityMode::Strike, vec!["656703508".to_string(), "3676029623".to_string(), "2230236215".to_string(), "2230236212".to_string(), "689927878".to_string(), "117447065".to_string(), "2579344189".to_string(), "743963294".to_string()]),
+
+    StrangeTerrain, (ActivityMode::Strike, vec!["2992505404".to_string(), "861639649".to_string(), "3801775390".to_string(), "2248296964".to_string(), "861639650".to_string()]),
+    WillOfTheThousands, (ActivityMode::Strike, vec!["1198216109".to_string(), "3944547192".to_string(), "3510043585".to_string(), "1317492847".to_string(), "1891220709".to_string(), "3944547195".to_string()]),
+
+    WardenOfNothing, (ActivityMode::Strike, vec!["1360385764".to_string(), "1360385767".to_string(), "1134446996".to_string(), "1493405720".to_string()]),
+    TheHollowedLair, (ActivityMode::Strike, vec!["663301842".to_string(), "1475539136".to_string(), "1475539139".to_string(), "955874134".to_string()]),
+    Broodhold, (ActivityMode::Strike, vec!["1666283939".to_string(), "3813623455".to_string()])
 });
 
 impl ActivityIdentifier {
