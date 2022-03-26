@@ -107,6 +107,14 @@ pub mod macros {
         };
     }
 
+    /// Enumize something to add certain constants to the enum
+    ///
+    /// Allows you to create an enum very similar to one in Java, where you can dictate
+    /// what goes in each enum. You can then call get() on any of the values in the enum
+    /// to get the value that it stores.
+    ///
+    /// Very useful within the API because there are a lot of enum types that contain values
+    /// such as ActivityIdentifier, ActivityMode and DestinyPlatform.
     #[macro_export]
     macro_rules! enumize {
         ($name: ident, $y: ty => {
@@ -114,7 +122,7 @@ pub mod macros {
             }
         )  => {
             $crate::as_item!{
-                #[derive(PartialEq)]
+                #[derive(PartialEq, Clone, Copy)]
                 pub enum $name {
                     $($na),*,
                 }

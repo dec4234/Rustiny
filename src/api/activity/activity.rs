@@ -283,3 +283,35 @@ enumize!(ActivityMode, i16 => {
     Dares, 85,
     Offensive, 86
 });
+
+// https://github.com/dec4234/JavaDestinyAPI/blob/master/src/main/java/net/dec4234/javadestinyapi/stats/activities/ActivityIdentifier.java
+enumize!(ActivityIdentifier, (ActivityMode, Vec<String>) => {
+    // Strikes
+    ArmsDealer, (ActivityMode::Strike, vec!["442671778".to_string(), "2080275457".to_string(), "2378719026".to_string(), "2724706103".to_string(), "2378719025".to_string(), "770196931".to_string(), "3240321863".to_string(), "1258914202".to_string(), "1679518121".to_string()]),
+    LakeOfShadows, (ActivityMode::Strike, vec!["2318521576".to_string(), "3711627564".to_string(), "3725993747".to_string(), "2630091891".to_string(), "4134816102".to_string()]),
+
+    TheDisgraced, (ActivityMode::Strike, vec!["1684420962".to_string(), "174131855".to_string()]),
+    FallenSaber, (ActivityMode::Strike, vec!["3597990372".to_string(), "3777220691".to_string()]),
+    DevilsLair, (ActivityMode::Strike, vec!["969982762".to_string()]),
+
+    SavathunsSong, (ActivityMode::Strike, vec!["2359594803".to_string(), "1101792305".to_string(), "3191123858".to_string(), "649648599".to_string(), "1542611209".to_string()]),
+
+    InvertedSpire, (ActivityMode::Strike, vec!["3704910925".to_string(), "1563393783".to_string(), "286562305".to_string(), "1107473294".to_string(), "1743518003".to_string(), "338662534".to_string(), "2753180142".to_string(), "1743518000".to_string(), "467266668".to_string()]),
+    ExodusCrash, (ActivityMode::Strike, vec!["2459768558".to_string(), "1549614516".to_string(), "4260306233".to_string(), "1930116823".to_string(), "2479262829".to_string(), "1930116820".to_string(), "2971335647".to_string()]),
+    InsightTerminus, (ActivityMode::Strike, vec!["3751421841".to_string(), "291911094".to_string(), "3735153516".to_string(), "3735153519".to_string()]),
+    ProvingGround, (ActivityMode::Strike, vec!["546528643".to_string(), "1754609040".to_string()])
+});
+
+impl ActivityIdentifier {
+    pub fn from_identifier(id: String) -> Option<ActivityIdentifier> {
+        for ai in ActivityIdentifier::get_all() {
+            for s in ai.get().1 {
+                if s == id {
+                    return Some(ai);
+                }
+            }
+        }
+
+        None
+    }
+}

@@ -305,10 +305,10 @@ fn print_pgcr(pgcr: &PGCR) {
 pub async fn manifest_test() {
     let man = Manifest::new(get_api().await.client);
 
-    let vec = vec!["584850370", "1273404180", "3381682691", "3759191272"];
+    let vec = vec!["2318521576", "3711627564", "3725993747", "2630091891", "4134816102"];
 
     for s in vec {
-        println!("{} = {}", s, man.manifest_get(ManifestEntityType::PROGRESSION, String::from(s)).await.unwrap());
+        println!("{} = {}", s, man.manifest_get(ManifestEntityType::ACTIVITY, String::from(s)).await.unwrap());
     }
 
 }
