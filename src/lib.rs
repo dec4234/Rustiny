@@ -49,7 +49,7 @@ impl Tester {
     }
 
     async fn get_unknown_activity_hashes(&self, scraper: &PgcrScraper) {
-        for ah in scraper.get_activity_history(self.get_user(), ActivityMode::Raid).await.unwrap() {
+        for ah in scraper.get_activity_history(self.get_user(), ActivityMode::ScoredNightfall).await.unwrap() {
             if let None = ActivityIdentifier::from_identifier(format!("{}", ah.activityDetails.referenceId)) {
                 println!("{}", ah.activityDetails.referenceId);
             }
@@ -70,7 +70,7 @@ async fn test_tester_items() {
 async fn test_hashes() {
     let man = Manifest::new(get_api().await.client);
 
-    let vec = vec!["1441982566", "2122313384", "548750096", "809170886", "2693136602", "1685065161", "119944200"];
+    let vec = vec!["3849697856", "887176543", "3289589202", "3718330161", "272852450", "1034003646", "1282886582", "936308438"];
 
     for s in vec {
         println!("{} = {}", s, man.manifest_get(ManifestEntityType::ACTIVITY, String::from(s)).await.unwrap());

@@ -285,6 +285,8 @@ enumize!(ActivityMode, i16 => {
 });
 
 // https://github.com/dec4234/JavaDestinyAPI/blob/master/src/main/java/net/dec4234/javadestinyapi/stats/activities/ActivityIdentifier.java
+/// A very incomplete list of the hashes for various activities
+/// Covers most of the important things but is otherwise incomplete
 enumize!(ActivityIdentifier, (ActivityMode, Vec<String>) => {
     // Strikes
     ArmsDealer, (ActivityMode::Strike, vec!["442671778".to_string(), "2080275457".to_string(), "2378719026".to_string(), "2724706103".to_string(), "2378719025".to_string(), "770196931".to_string(), "3240321863".to_string(), "1258914202".to_string(), "1679518121".to_string()]),
@@ -323,24 +325,92 @@ enumize!(ActivityIdentifier, (ActivityMode, Vec<String>) => {
     QuestExodusCrash, (ActivityMode::Strike, vec!["940394831".to_string()]),
 
     // Nightfalls
+    ArmsDealerNightfall, (ActivityMode::ScoredNightfall, vec!["3145298904".to_string()]),
+    ArmsDealerNightfallNormal, (ActivityMode::ScoredNightfall, vec!["145302664".to_string()]),
+    QuestArmsDealerNightfall, (ActivityMode::ScoredNightfall, vec!["1207505828".to_string()]),
+    ArmsDealerNightfallPrestige, (ActivityMode::Raid, vec!["601540706".to_string()]),
+    LakeOfShadowsNightfall, (ActivityMode::ScoredNightfall, vec!["3372160277".to_string()]),
 
-    // Old Ones
+    SavathunsSongNightfall, (ActivityMode::ScoredNightfall, vec!["1975064760".to_string()]),
+    SavathunsSongNightfallPrestige, (ActivityMode::ScoredNightfall, vec!["585071442".to_string()]),
+
+    ExodusCrashNightfall, (ActivityMode::ScoredNightfall, vec!["1282886582".to_string()]),
+    TheInvertedSpireNightfall, (ActivityMode::ScoredNightfall, vec!["3368226533".to_string(), "4259769141".to_string()]),
+    TheInvertedSpireNightfallPrestige, (ActivityMode::ScoredNightfall, vec!["3050465729".to_string()]),
+    TheInsightTerminusNightfall, (ActivityMode::ScoredNightfall, vec!["1034003646".to_string()]),
+
+    ThePyramidionNightfallNormal, (ActivityMode::ScoredNightfall, vec!["926940962".to_string(), "3289589202".to_string()]),
+    ThePyramidionNightfallPrestige, (ActivityMode::ScoredNightfall, vec!["1129066976".to_string()]),
+
+    TreeOfProbabilitiesNightfall, (ActivityMode::ScoredNightfall, vec!["2046332536".to_string(), "3718330161".to_string()]),
+    TreeOfProbabilitiesNightfallPrestige, (ActivityMode::ScoredNightfall, vec!["2416546450".to_string()]),
+    AGardenWorldNightfall, (ActivityMode::ScoredNightfall, vec!["936308438".to_string()]),
+    AGardenWorldNightfallPrestige, (ActivityMode::ScoredNightfall, vec!["2688061647".to_string()]),
+
+    StrangeTerrainNightfallNormal, (ActivityMode::ScoredNightfall, vec!["522318687".to_string()]),
+    StrangeTerrainNightfallPrestige, (ActivityMode::ScoredNightfall, vec!["1794007817".to_string()]),
+    WillOfTheThousandsNightfall, (ActivityMode::ScoredNightfall, vec!["272852450".to_string()]),
+    WillOfTheThousandsNightfallPrestige, (ActivityMode::ScoredNightfall, vec!["2383858990".to_string()]),
+
+    TheCorruptedNightfall, (ActivityMode::ScoredNightfall, vec!["3034843176".to_string()]),
 
     // Post-Shadowkeep
-    TheDisgracedMaster, (ActivityMode::ScoredHeroicNightfall, vec![]),
+    ArmsDealerNightfallAdept, (ActivityMode::ScoredNightfall, vec!["1753547897".to_string()]),
+    ArmsDealerNightfallHero, (ActivityMode::ScoredNightfall, vec!["1753547898".to_string()]),
+
+    TheDisgracedNightfallHero, (ActivityMode::ScoredHeroicNightfall, vec!["2136458567".to_string()]),
+    TheDisgracedNightfallLegend, (ActivityMode::ScoredHeroicNightfall, vec!["2136458566".to_string()]),
+    TheDisgracedNightfallMaster, (ActivityMode::ScoredHeroicNightfall, vec!["2136458561".to_string()]),
+    TheDisgracedNightfallGrandmaster, (ActivityMode::ScoredHeroicNightfall, vec!["2136458560".to_string()]),
+
+    DevilsLairNightfallAdept, (ActivityMode::ScoredNightfall, vec!["1203950596".to_string()]),
+    DevilsLairNightfallHero, (ActivityMode::ScoredNightfall, vec!["1203950599".to_string()]),
+
+    SavathunsSongNightfallAdept, (ActivityMode::ScoredNightfall, vec!["3849697856".to_string()]),
+
+    TheInvertedSpireNightfallLegend, (ActivityMode::ScoredNightfall, vec!["2599001913".to_string(), "1801803625".to_string()]),
+    TheInvertedSpireNightfallGrandmaster, (ActivityMode::ScoredNightfall, vec!["2599001919".to_string()]),
+
+    ExodusCrashNightfallLegend, (ActivityMode::ScoredNightfall, vec!["3233498448".to_string()]),
+
+    WardenOfNothingNightfall, (ActivityMode::ScoredNightfall, vec!["3108813009".to_string()]),
+
+    TheHollowedLairNightfall, (ActivityMode::Nightfall, vec!["3701132453".to_string()]),
+
+    TheBroodholdNightfallHero, (ActivityMode::ScoredNightfall, vec!["265186830".to_string()]),
+
+    TheScarletKeepNightfallHero, (ActivityMode::ScoredNightfall, vec!["887176543".to_string()]),
+    TheScarletKeepNightfallLegend, (ActivityMode::ScoredNightfall, vec!["1495545954".to_string()]),
+
+    TheGlasswayNightfallHero, (ActivityMode::ScoredNightfall, vec!["3812135452".to_string()]),
+    TheGlasswayNightfallLegend, (ActivityMode::ScoredNightfall, vec!["3812135453".to_string()]),
+    TheGlasswayNightfallMaster, (ActivityMode::ScoredNightfall, vec!["3812135450".to_string()]),
+
+    TheLightbladeNightfallLegend, (ActivityMode::ScoredNightfall, vec!["1964120203".to_string()]),
+
+    // Lost Sectors
+    ScavengersDenLostSectorLegend, (ActivityMode::ScoredNightfall, vec!["1905792149".to_string()]),
+    BunkerE15LostSectorLegend, (ActivityMode::ScoredNightfall, vec!["1648125541".to_string()]),
+    ConcealedVoidLostSectorLegend, (ActivityMode::ScoredNightfall, vec!["912873277".to_string()]),
+    K1LogisticsLostSectorLegend, (ActivityMode::ScoredNightfall, vec!["567131512".to_string()]),
 
     // Raids
-    Leviathan, (ActivityMode::Raid, vec!["2693136600".to_string(), "2693136602".to_string()]),
-    LeviathanPrestige, (ActivityMode::Raid, vec!["1685065161".to_string()]),
+    Leviathan, (ActivityMode::Raid, vec!["2693136600".to_string(), "2693136602".to_string(), "2693136605".to_string(), "2693136604".to_string(), "2693136603".to_string(), "2693136601".to_string()]),
+    LeviathanPrestige, (ActivityMode::Raid, vec!["1685065161".to_string(), "3446541099".to_string(), "2449714930".to_string(), "3879860661".to_string(), "417231112".to_string(), "757116822".to_string()]),
+    EaterOfWorlds, (ActivityMode::Raid, vec!["3089205900".to_string()]),
     EaterOfWorldsPrestige, (ActivityMode::Raid, vec!["809170886".to_string()]),
     SpireOfStars, (ActivityMode::Raid, vec!["119944200".to_string()]),
+    SpireOfStarsPrestige, (ActivityMode::Raid, vec!["3213556450".to_string()]),
 
     LastWish, (ActivityMode::Raid, vec!["2122313384".to_string()]),
     ScourgeOfThePast, (ActivityMode::Raid, vec!["548750096".to_string()]),
     CrownOfSorrow, (ActivityMode::Raid, vec!["3333172150".to_string()]),
 
-    DeepStoneCrupt, (ActivityMode::Raid, vec!["910380154".to_string()]),
+    GardenOfSalvation, (ActivityMode::Raid, vec!["3458480158".to_string(), "2659723068".to_string()]),
+
+    DeepStoneCrypt, (ActivityMode::Raid, vec!["910380154".to_string()]),
     VaultOfGlass, (ActivityMode::Raid, vec!["3881495763".to_string()]),
+    VaultOfGlassMaster, (ActivityMode::Raid, vec!["1681562271".to_string()]),
 
     VowOfTheDisciple, (ActivityMode::Raid, vec!["1441982566".to_string()])
 });
