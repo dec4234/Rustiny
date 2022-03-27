@@ -1,5 +1,5 @@
 use std::borrow::Borrow;
-use crate::api::activity::activity::{ActivityMode, PGCR, PgcrScraper};
+use crate::api::activity::activity::{ActivityIdentifier, ActivityMode, PGCR, PgcrScraper};
 use crate::api::DestinyAPI::ApiInterface;
 use crate::api::user::BungieUser::{BungieUser, DestinyPlatform};
 use crate::api::clan::Clan::Clan;
@@ -40,11 +40,20 @@ impl Tester {
     }
 
     async fn test_all(&self, scraper: &PgcrScraper) {
-        self.activity_history(scraper).await;
+        // self.activity_history(scraper).await;
+        self.get_unknown_activity_hashes(scraper).await;
     }
 
     async fn activity_history(&self, scraper: &PgcrScraper) {
         println!("Acitivty History Reports - {}", scraper.get_activity_history(self.get_user(), ActivityMode::Raid).await.unwrap().len());
+    }
+
+    async fn get_unknown_activity_hashes(&self, scraper: &PgcrScraper) {
+        for ah in scraper.get_activity_history(self.get_user(), ActivityMode::Raid).await.unwrap() {
+            if let None = ActivityIdentifier::from_identifier(format!("{}", ah.activityDetails.referenceId)) {
+                println!("{}", ah.activityDetails.referenceId);
+            }
+        }
     }
 }
 
@@ -54,6 +63,18 @@ async fn test_tester_items() {
     let scraper = PgcrScraper::new(&test.interface.client.clone().await).await;
 
     test.test_all(&scraper).await;
+}
+
+#[tokio::test]
+#[ignore]
+async fn test_hashes() {
+    let man = Manifest::new(get_api().await.client);
+
+    let vec = vec!["1441982566", "2122313384", "548750096", "809170886", "2693136602", "1685065161", "119944200"];
+
+    for s in vec {
+        println!("{} = {}", s, man.manifest_get(ManifestEntityType::ACTIVITY, String::from(s)).await.unwrap());
+    }
 }
 
 async fn get_api() -> ApiInterface {

@@ -122,7 +122,7 @@ pub mod macros {
             }
         )  => {
             $crate::as_item!{
-                #[derive(PartialEq, Clone, Copy)]
+                #[derive(Clone, Copy)]
                 pub enum $name {
                     $($na),*,
                 }
@@ -149,6 +149,13 @@ pub mod macros {
                     }
                 }
             }
+
+            impl std::cmp::PartialEq for $name {
+                fn eq(&self, other: &Self) -> bool {
+                    use std::mem::discriminant;
+                    discriminant(self) == discriminant(other)
+                }
+            }
         };
     }
 
@@ -161,7 +168,7 @@ pub mod macros {
         } );
 
         for t in TestEnum::get_all() {
-            println!("{}", t.get());
+            println!("{}", t == TestEnum::y);
         }
     }
 

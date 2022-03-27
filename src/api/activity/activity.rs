@@ -312,7 +312,37 @@ enumize!(ActivityIdentifier, (ActivityMode, Vec<String>) => {
 
     WardenOfNothing, (ActivityMode::Strike, vec!["1360385764".to_string(), "1360385767".to_string(), "1134446996".to_string(), "1493405720".to_string()]),
     TheHollowedLair, (ActivityMode::Strike, vec!["663301842".to_string(), "1475539136".to_string(), "1475539139".to_string(), "955874134".to_string()]),
-    Broodhold, (ActivityMode::Strike, vec!["1666283939".to_string(), "3813623455".to_string()])
+    Broodhold, (ActivityMode::Strike, vec!["1666283939".to_string(), "3813623455".to_string()]),
+
+    TheCorrupted, (ActivityMode::Strike, vec!["3374205762".to_string(), "723056533".to_string(), "224295651".to_string()]),
+
+    TheScarletKeep, (ActivityMode::Strike, vec!["1775791936".to_string(), "3879143309".to_string(), "3643233460".to_string(), "2047723007".to_string(), "346345236".to_string()]),
+
+    TheGlassway, (ActivityMode::Strike, vec!["2226120409".to_string(), "3965479856".to_string(), "3329390423".to_string()]),
+
+    QuestExodusCrash, (ActivityMode::Strike, vec!["940394831".to_string()]),
+
+    // Nightfalls
+
+    // Old Ones
+
+    // Post-Shadowkeep
+    TheDisgracedMaster, (ActivityMode::ScoredHeroicNightfall, vec![]),
+
+    // Raids
+    Leviathan, (ActivityMode::Raid, vec!["2693136600".to_string(), "2693136602".to_string()]),
+    LeviathanPrestige, (ActivityMode::Raid, vec!["1685065161".to_string()]),
+    EaterOfWorldsPrestige, (ActivityMode::Raid, vec!["809170886".to_string()]),
+    SpireOfStars, (ActivityMode::Raid, vec!["119944200".to_string()]),
+
+    LastWish, (ActivityMode::Raid, vec!["2122313384".to_string()]),
+    ScourgeOfThePast, (ActivityMode::Raid, vec!["548750096".to_string()]),
+    CrownOfSorrow, (ActivityMode::Raid, vec!["3333172150".to_string()]),
+
+    DeepStoneCrupt, (ActivityMode::Raid, vec!["910380154".to_string()]),
+    VaultOfGlass, (ActivityMode::Raid, vec!["3881495763".to_string()]),
+
+    VowOfTheDisciple, (ActivityMode::Raid, vec!["1441982566".to_string()])
 });
 
 impl ActivityIdentifier {
