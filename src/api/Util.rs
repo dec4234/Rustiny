@@ -159,6 +159,17 @@ pub mod macros {
         };
     }
 
+    /*
+    impl std::cmp::PartialEq for $name {
+                fn eq(&self, other: &Self) -> bool {
+                    match (self, other) {
+                        $(($na, $na) => true,),*
+                        _ => false
+                    }
+                }
+            }
+     */
+
     #[test]
     #[ignore]
     fn enumize_test() {
