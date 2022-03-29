@@ -23,14 +23,14 @@ pub struct Clan {
 }
 
 impl Clan {
-    pub async fn get_by_id(apiClient: ApiClient, id: i32) -> Result<Self> {
-        let clan = apiClient.get(format!("{base}/GroupV2/{groupId}/", base = DestinyAPI::URL_BASE, groupId = id)).await?;
+    pub async fn get_by_id(client: ApiClient, id: i32) -> Result<Self> {
+        let clan = client.get(format!("{base}/GroupV2/{groupId}/", base = DestinyAPI::URL_BASE, groupId = id)).await?;
 
         Ok(Clan::from_string_response(clan)?)
     }
 
-    pub async fn get_by_name(apiClient: ApiClient, name: &str) -> Result<Self> {
-        let clan = apiClient.get(format!("{base}/GroupV2/Name/{groupName}/{groupType}/", base = DestinyAPI::URL_BASE, groupName = name, groupType = 1)).await?;
+    pub async fn get_by_name(client: ApiClient, name: &str) -> Result<Self> {
+        let clan = client.get(format!("{base}/GroupV2/Name/{groupName}/{groupType}/", base = DestinyAPI::URL_BASE, groupName = name, groupType = 1)).await?;
 
         Ok(Clan::from_string_response(clan)?)
     }

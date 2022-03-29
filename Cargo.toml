@@ -20,4 +20,5 @@ serde_json = "1.0"
 reqwest = { version = "0.11", features = ["json"] }
 tokio = { version = "1.14.0", features = ["full"] }
 chrono = "0.4.19"
-strum = { version = "0.24", features = ["derive"] }
+sqlite = "0.26.0"
+zip = "0.6.0"

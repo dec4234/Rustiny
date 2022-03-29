@@ -1,8 +1,10 @@
+use std::fs;
 use crate::api::ApiClient::ApiClient;
 use anyhow::Result;
 use serde_json::Value;
 use crate::api::DestinyAPI::URL_BASE;
 use serde::{Deserialize, Serialize};
+use sqlite::Connection;
 use crate::enumize;
 
 pub struct Manifest {
@@ -26,6 +28,10 @@ impl Manifest {
         let resp = self.client.get(format!("{}/Destiny2/Manifest/{entityType}/{hashIdentifier}/", URL_BASE, entityType = typ.get(), hashIdentifier = hash)).await?;
 
         Ok(resp)
+    }
+
+    pub async fn get_manifest_info(&self) -> Result<ManifestInfoResponse> {
+        self.client.get_parse::<ManifestInfoResponse>(format!("{}/Destiny2/Manifest/", URL_BASE), true).await
     }
 
     pub async fn manifest_reward(&self, milestoneHash: i64, rewardEntryHash: i64) -> Result<RewardInfo> {
@@ -54,6 +60,73 @@ impl Manifest {
         Ok(inner)
     }
 }
+
+/// This is where the Local Manifest Manager will live in the future
+/// 
+/// Non-functional at the moment, use Manifest::manifest()
+pub struct LocalManifest {
+    client: ApiClient,
+    connection: Connection,
+}
+
+impl LocalManifest {
+    pub async fn load(client: &ApiClient, path: String, version: String) -> Result<Self> {
+        let info = Manifest::new(client.clone().await).get_manifest_info().await?;
+
+        let connection = Connection::open(&path)?;
+
+        Ok(Self {
+            client: client.clone().await,
+            connection,
+        })
+    }
+
+
+}
+
+#[derive(Deserialize, Serialize, Clone)]
+pub struct ManifestInfoResponse {
+    pub version: String,
+    pub mobileAssetContentPath: String,
+    pub mobileWorldContentPaths: MobileWorldContentPaths,
+}
+
+#[derive(Deserialize, Serialize, Clone)]
+pub struct MobileWorldContentPaths {
+    pub en: String,
+    pub fr: String,
+    pub es: String,
+    #[serde(rename = "es-mx")]
+    pub esmx: String,
+    pub de: String,
+    pub it: String,
+    pub ja: String,
+    #[serde(rename = "pt-br")]
+    pub ptbr: String,
+    pub ru: String,
+    pub pl: String,
+    pub ko: String,
+    #[serde(rename = "zh-cht")]
+    pub zhcht: String,
+    #[serde(rename = "zh-chs")]
+    pub zhchs: String,
+}
+
+enumize!(ManifestLanguage, String => {
+    English, "en".to_string(),
+    French, "fr".to_string(),
+    Espanol, "es".to_string(),
+    EspanolMexico, "es-mx".to_string(),
+    Deutsch, "de".to_string(),
+    Italian, "it".to_string(),
+    Japanese, "ja".to_string(),
+    PortugueseBrazil, "pt-br".to_string(),
+    Russian, "ru".to_string(),
+    Polish, "pl".to_string(),
+    Korean, "ko".to_string(),
+    ChineseTraditional, "zh-cht".to_string(),
+    ChineseSimplified, "zh-chs".to_string()
+});
 
 #[derive(Deserialize, Serialize, Clone)]
 pub struct Rewards {

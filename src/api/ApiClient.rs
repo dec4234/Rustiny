@@ -145,11 +145,3 @@ impl ApiClient {
         Ok(serde_json::from_str::<T>(text.as_str())?)
     }
 }
-
-pub trait HandleValue {
-    fn handle(value: Value) -> Value;
-}
-
-fn encode_url(url: String) -> String {
-    url.replace(" ", "%20")
-}

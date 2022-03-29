@@ -1,15 +1,12 @@
-use tokio::sync::Mutex;
 use crate::api::ApiClient::ApiClient;
 use serde::{Deserialize, Serialize};
 use anyhow::Result;
 use chrono::NaiveDateTime;
 use serde_json::Value;
-use strum::{EnumIter, IntoEnumIterator};
 use crate::api::DestinyAPI::URL_BASE;
 use crate::api::user::BungieUser::DestinyProfile;
 use crate::api::Util::date_deserializer;
-use crate::api::Util::macros;
-use crate::{basic, BungieUser, DestinyCharacter, enumize};
+use crate::{basic, BungieUser, enumize};
 use crate::api::Util::macros::Basic;
 
 pub struct PgcrScraper {
@@ -287,6 +284,10 @@ enumize!(ActivityMode, i16 => {
 // https://github.com/dec4234/JavaDestinyAPI/blob/master/src/main/java/net/dec4234/javadestinyapi/stats/activities/ActivityIdentifier.java
 /// A very incomplete list of the hashes for various activities
 /// Covers most of the important things but is otherwise incomplete
+///
+/// Use the Manifest to find items if they are not here.
+///
+/// TO-DO: Narrow down to only the Strikes and Raids
 enumize!(ActivityIdentifier, (ActivityMode, Vec<String>) => {
     // Strikes
     ArmsDealer, (ActivityMode::Strike, vec!["442671778".to_string(), "2080275457".to_string(), "2378719026".to_string(), "2724706103".to_string(), "2378719025".to_string(), "770196931".to_string(), "3240321863".to_string(), "1258914202".to_string(), "1679518121".to_string()]),
@@ -416,6 +417,10 @@ enumize!(ActivityIdentifier, (ActivityMode, Vec<String>) => {
 });
 
 impl ActivityIdentifier {
+    /// Get the ActivityIdentifier of the inputed hash
+    ///
+    /// Does not have all Activity definitions
+    /// Use manifest to find the rest
     pub fn from_identifier(id: String) -> Option<ActivityIdentifier> {
         for ai in ActivityIdentifier::get_all() {
             for s in ai.get().1 {
