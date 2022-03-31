@@ -5,3 +5,4 @@ pub mod clan;
 pub mod Util;
 pub mod activity;
 pub mod manifest;
+pub mod items;
