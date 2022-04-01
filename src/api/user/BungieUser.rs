@@ -6,7 +6,7 @@ use chrono::NaiveDateTime;
 use crate::api::ApiClient::ApiClient;
 use crate::api::DestinyAPI;
 use crate::api::DestinyAPI::URL_BASE;
-use crate::api::Util::date_deserializer;
+use crate::api::Util::date_deserializer_optional;
 use crate::api::user::DestinyCharacter::DestinyCharacter;
 use crate::enumize;
 
@@ -184,8 +184,8 @@ pub struct DestinyProfile {
     #[serde(rename = "applicableMembershipTypes")]
     pub membership_types: Vec<i8>,
 
-    #[serde(default = "date_deserializer::default")]
-    #[serde(with = "date_deserializer")]
+    #[serde(default = "date_deserializer_optional::default")]
+    #[serde(with = "date_deserializer_optional")]
     pub dateLastPlayed: Option<NaiveDateTime>,
 
     // Only present in Clan Member reponses and Founder profile

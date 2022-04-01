@@ -1,7 +1,7 @@
 use chrono::NaiveDateTime;
 use serde::{Deserialize, Serialize};
 use serde_json::Value;
-use crate::api::Util::date_deserializer;
+use crate::api::Util::date_deserializer_optional;
 use anyhow::Result;
 use crate::BungieUser;
 
@@ -14,8 +14,8 @@ pub struct DestinyCharacter {
     pub characterId: String,
     pub classHash: i64,
     pub classType: i16,
-    #[serde(default = "date_deserializer::default")]
-    #[serde(with = "date_deserializer")]
+    #[serde(default = "date_deserializer_optional::default")]
+    #[serde(with = "date_deserializer_optional")]
     pub dateLastPlayed: Option<NaiveDateTime>,
     pub emblemBackgroundPath: String,
     pub emblemColor: EmblemColor,

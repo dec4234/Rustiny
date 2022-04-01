@@ -68,18 +68,16 @@ impl PgcrScraper {
 
 #[derive(Deserialize, Serialize, Clone)]
 pub struct ActivityHistoryResponse {
-    #[serde(default = "date_deserializer::default")]
     #[serde(with = "date_deserializer")]
-    pub period: Option<NaiveDateTime>,
+    pub period: NaiveDateTime,
     pub activityDetails: ActivityDetails,
     pub values: EntryValues,
 }
 
 #[derive(Deserialize, Serialize, Clone)]
 pub struct PGCR {
-    #[serde(default = "date_deserializer::default")]
     #[serde(with = "date_deserializer")]
-    pub period: Option<NaiveDateTime>,
+    pub period: NaiveDateTime,
     pub startingPhaseIndex: i8,
     pub activityWasStartedFromBeginning: bool,
     pub activityDetails: ActivityDetails,

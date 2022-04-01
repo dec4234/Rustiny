@@ -68,9 +68,9 @@ pub struct ClanDetail {
     #[serde(rename = "membershipIdCreated")]
     pub founderId: String,
     #[serde(with = "date_deserializer")]
-    pub creationDate: Option<NaiveDateTime>,
+    pub creationDate: NaiveDateTime,
     #[serde(with = "date_deserializer")]
-    pub modificationDate: Option<NaiveDateTime>,
+    pub modificationDate: NaiveDateTime,
 
     #[serde(rename = "about")]
     pub description: String,
@@ -94,7 +94,7 @@ pub struct ClanDetail {
     pub enableInvitationMessagingForAdmins: bool,
 
     #[serde(with = "date_deserializer")]
-    pub banExpireDate: Option<NaiveDateTime>,
+    pub banExpireDate: NaiveDateTime,
     pub features: ClanFeatures,
     pub clanInfo: ClanInfo,
 }
@@ -127,7 +127,7 @@ pub struct ClanMember {
     pub destinyUserInfo: DestinyProfile,
     pub bungieNetUserInfo: BnetMembership,
     #[serde(with = "date_deserializer")]
-    pub joinDate: Option<NaiveDateTime>,
+    pub joinDate: NaiveDateTime,
 }
 
 #[derive(Deserialize, Serialize, Clone)]

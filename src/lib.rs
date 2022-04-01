@@ -151,6 +151,7 @@ fn print_user(user: &BungieUser) {
         println!("Last Played - {}", date);
     }
 
+
     println!("Platform Display Name - {}", user.primary.platform_display_name);
     println!("Cross Save Override - {}", user.primary.cross_save_override);
 
@@ -204,8 +205,8 @@ fn print_clan(clan: Clan) {
     println!("Clan Name - {}", clan.detail.name);
     println!("Group Type - {}", clan.detail.groupType);
     println!("Founder ID - {}", clan.detail.founderId);
-    println!("Creation Date - {}", clan.detail.creationDate.unwrap());
-    println!("Modification Date - {}", clan.detail.modificationDate.unwrap());
+    println!("Creation Date - {}", clan.detail.creationDate);
+    println!("Modification Date - {}", clan.detail.modificationDate);
 
     println!("Description - {}\n", clan.detail.description);
     println!("Member Count - {}", clan.detail.memberCount);
@@ -226,7 +227,7 @@ fn print_clan(clan: Clan) {
     println!("Conversation ID - {}", clan.detail.conversationId);
     println!("Enable Invitation Messaging For Admins - {}", clan.detail.enableInvitationMessagingForAdmins);
 
-    println!("Ban Expiration Date - {}", clan.detail.banExpireDate.unwrap());
+    println!("Ban Expiration Date - {}", clan.detail.banExpireDate);
 
     println!("Number of Allied IDs - {}", clan.alliedIds.len());
     println!("Alliance Status - {}", clan.allianceStatus);
@@ -279,7 +280,7 @@ async fn get_founder() {
     let clan = Clan::get_by_id(get_api().await.client, 3074427).await.unwrap();
     let founder = clan.founder;
 
-    println!("{} - {}", founder.destinyUserInfo.global_display_name, founder.joinDate.unwrap());
+    println!("{} - {}", founder.destinyUserInfo.global_display_name, founder.joinDate);
 }
 
 #[tokio::test]
@@ -302,7 +303,7 @@ pub async fn test_pgcr_votd() {
 
 fn print_pgcr(pgcr: &PGCR) {
     println!("ID - {}", pgcr.activityDetails.instanceId);
-    println!("Date - {}", pgcr.period.unwrap());
+    println!("Date - {}", pgcr.period);
     println!("Starting Phase Index - {}", pgcr.startingPhaseIndex);
     println!("Was Started From The Beginning - {}", pgcr.activityWasStartedFromBeginning);
 
