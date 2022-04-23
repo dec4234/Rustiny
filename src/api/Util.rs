@@ -1,3 +1,4 @@
+/// Date deserializer
 pub mod date_deserializer {
     use chrono::{DateTime, Utc, NaiveDateTime};
     use serde::{Deserialize, Deserializer, Serialize, Serializer};
@@ -25,11 +26,11 @@ pub mod date_deserializer {
             time.push('Z');
         }
 
-        Ok(NaiveDateTime::parse_from_str(&time, "%Y-%m-%dT%H:%M:%SZ").map_err(D::Error::custom)?)
+        NaiveDateTime::parse_from_str(&time, "%Y-%m-%dT%H:%M:%SZ").map_err(D::Error::custom)
     }
 
     pub fn parse_from_string(t: String) -> Result<NaiveDateTime> {
-        let mut time = t.clone();
+        let mut time = t;
 
         // Zulu Time Comes in two forms, one that includes milliseconds to 3 number percision and one without
         // Milliseconds will almost never be needed so if there are any they are removed
@@ -44,6 +45,8 @@ pub mod date_deserializer {
     }
 }
 
+/// Date deserializer - returns Option instead of regular
+/// for fields that aren't always present in a deserialization body
 pub mod date_deserializer_optional {
     use chrono::{DateTime, Utc, NaiveDateTime};
     use serde::{Deserialize, Deserializer, Serialize, Serializer};
@@ -79,7 +82,7 @@ pub mod date_deserializer_optional {
     }
 
     pub fn parse_from_string(t: String) -> Result<NaiveDateTime> {
-        let mut time = t.clone();
+        let mut time = t;
 
         // Zulu Time Comes in two forms, one that includes milliseconds to 3 number percision and one without
         // Milliseconds will almost never be needed so if there are any they are removed
@@ -106,6 +109,7 @@ pub mod date_deserializer_optional {
     }
 }
 
+/// Utility macros used to generate code
 #[macro_use]
 pub mod macros {
     /// Create A Hashmap

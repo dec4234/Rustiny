@@ -101,6 +101,14 @@ impl BungieUser {
         Err(anyhow!("Returned List was Empty, check your search query"))
     }
 
+    pub async fn get_user_by_steam_id(client: &ApiClient, steamID: String) -> Result<BungieUser> {
+        let url = format!("{}/User/GetMembershipFromHardLinkedCredential/{crType}/{credential}/", URL_BASE, crType = "SteamId", credential = steamID);
+
+        let resp = client.get_parse::<Value>(url, true).await?;
+
+        BungieUser::new(resp)
+    }
+
     /// Get the primary Profile associated with this account. A.k.a.
     /// the one that has taken precedence over other profiles connected
     /// to the account due to cross-save.
