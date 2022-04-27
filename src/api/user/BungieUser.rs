@@ -106,7 +106,7 @@ impl BungieUser {
 
         let resp = client.get_parse::<Value>(url, true).await?;
 
-        BungieUser::new(resp)
+        BungieUser::get_user_by_id(client, String::from(resp["membershipId"].as_str().unwrap()), DestinyPlatform::All).await
     }
 
     /// Get the primary Profile associated with this account. A.k.a.

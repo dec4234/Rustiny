@@ -6,6 +6,7 @@ use crate::api::clan::Clan::Clan;
 use crate::api::manifest::manifest::{Manifest, ManifestEntityType};
 use crate::api::user::DestinyCharacter::DestinyCharacter;
 use anyhow::Result;
+use crate::DestinyPlatform::BungieNext;
 
 pub mod api;
 
@@ -117,6 +118,14 @@ async fn get_user_by_name_and_discriminator_and_characters() {
 
     println!("\n-----Get Characters-----");
     get_characters(&user).await;
+}
+
+#[tokio::test]
+async fn get_user_by_steam_id() {
+    println!("------Get Member by Steam ID-----");
+
+    let user = BungieUser::get_user_by_steam_id(&get_api().await.client, String::from("76561198352515430")).await.unwrap();
+    print_user(&user);
 }
 
 async fn get_characters(user: &BungieUser) {
