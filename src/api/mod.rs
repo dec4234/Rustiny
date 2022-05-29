@@ -6,3 +6,4 @@ pub mod Util;
 pub mod activity;
 pub mod manifest;
 pub mod items;
+pub mod oauth;

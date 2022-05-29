@@ -33,7 +33,7 @@ println!("{}", clan.founder.destinyUserInfo.global_display_name);
 ## Development Outlook
 1. ### Stats
    1. Users
-      1. User from Steam ID
+      1. ~~User from Steam ID~~
    2. ~~Clans~~ 
    3. ~~Characters~~ 
    4. ~~Activity History / PGCRs~~
